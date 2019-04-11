@@ -1,0 +1,34 @@
+<xf:if is="$forumStatistics.svDailyStatistics.latestUsers is not empty">
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('svDailyStatistics_new_members_today') }}</dt>
+		<dd>{$forumStatistics.svDailyStatistics.latestUsers.today|number}</dd>
+	</dl>
+</xf:if>
+
+<xf:if is="$forumStatistics.svDailyStatistics.threads is not empty">
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('svDailyStatistics_new_threads_today') }}</dt>
+		<dd>{$forumStatistics.svDailyStatistics.threads.today|number}</dd>
+	</dl>
+</xf:if>
+
+<xf:if is="$forumStatistics.svDailyStatistics.posts is not empty">
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('svDailyStatistics_new_posts_today') }}</dt>
+		<dd>{$forumStatistics.svDailyStatistics.posts.today|number}</dd>
+	</dl>
+</xf:if>
+
+<xf:if is="$forumStatistics.svDailyStatistics.resource is not empty">
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('svDailyStatistics_new_resourcess_today') }}</dt>
+		<dd>{$forumStatistics.svDailyStatistics.resources.today|number}</dd>
+	</dl>
+</xf:if>
+
+<xf:if is="$forumStatistics.svDailyStatistics.mediaItems is not empty">
+	<dl class="pairs pairs--justified">
+		<dt>{{ phrase('svDailyStatistics_new_media_items_today') }}</dt>
+		<dd>{$forumStatistics.svDailyStatistics.mediaItems.today|number}</dd>
+	</dl>
+</xf:if>

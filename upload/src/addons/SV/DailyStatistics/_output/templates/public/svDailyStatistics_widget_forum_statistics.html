@@ -1,36 +1,38 @@
 <xf:if is="$xf.options.svDailyStatistics_showInForumStatisticsWidget">
 	<xf:if is="$forumStatistics.svDailyStatistics.latestUsers is not empty">
-		<dl class="pairs pairs--justified">
-			<dt>{{ phrase('svDailyStatistics_new_members_today') }}</dt>
-			<dd>{$forumStatistics.svDailyStatistics.latestUsers.today|number}</dd>
-		</dl>
+		<xf:macro name="stat_block"
+				  arg-label="{{ phrase('svDailyStatistics_new_members_today') }}"
+				  arg-count="{$forumStatistics.svDailyStatistics.latestUsers.today}" />
 	</xf:if>
 
 	<xf:if is="$forumStatistics.svDailyStatistics.threads is not empty">
-		<dl class="pairs pairs--justified">
-			<dt>{{ phrase('svDailyStatistics_new_threads_today') }}</dt>
-			<dd>{$forumStatistics.svDailyStatistics.threads.today|number}</dd>
-		</dl>
+		<xf:macro name="stat_block"
+				  arg-label="{{ phrase('svDailyStatistics_new_threads_today') }}"
+				  arg-count="{$forumStatistics.svDailyStatistics.threads.today}" />
 	</xf:if>
 
 	<xf:if is="$forumStatistics.svDailyStatistics.posts is not empty">
-		<dl class="pairs pairs--justified">
-			<dt>{{ phrase('svDailyStatistics_new_posts_today') }}</dt>
-			<dd>{$forumStatistics.svDailyStatistics.posts.today|number}</dd>
-		</dl>
+		<xf:macro name="stat_block"
+				  arg-label="{{ phrase('svDailyStatistics_new_posts_today') }}"
+				  arg-count="{$forumStatistics.svDailyStatistics.posts.today}" />
 	</xf:if>
 
 	<xf:if is="$forumStatistics.svDailyStatistics.resource is not empty">
-		<dl class="pairs pairs--justified">
-			<dt>{{ phrase('svDailyStatistics_new_resourcess_today') }}</dt>
-			<dd>{$forumStatistics.svDailyStatistics.resources.today|number}</dd>
-		</dl>
+		<xf:macro name="stat_block"
+				  arg-label="{{ phrase('svDailyStatistics_new_resourcess_today') }}"
+				  arg-count="{$forumStatistics.svDailyStatistics.resources.today}" />
 	</xf:if>
 
 	<xf:if is="$forumStatistics.svDailyStatistics.mediaItems is not empty">
-		<dl class="pairs pairs--justified">
-			<dt>{{ phrase('svDailyStatistics_new_media_items_today') }}</dt>
-			<dd>{$forumStatistics.svDailyStatistics.mediaItems.today|number}</dd>
-		</dl>
+		<xf:macro name="stat_block"
+				  arg-label="{{ phrase('svDailyStatistics_new_media_items_today') }}"
+				  arg-count="{$forumStatistics.svDailyStatistics.mediaItems.today}" />
 	</xf:if>
 </xf:if>
+
+<xf:macro name="stat_block" arg-label="!" arg-count="!" arg-pairClass="">
+	<dl class="pairs pairs--justified {$pairClass}">
+		<dt>{{ $label }}</dt>
+		<dd>{$count|number}</dd>
+	</dl>
+</xf:macro>

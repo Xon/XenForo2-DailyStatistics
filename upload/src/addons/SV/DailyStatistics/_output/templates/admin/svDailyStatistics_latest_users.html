@@ -1,0 +1,55 @@
+<xf:title>{{ phrase('svDailyStatistics_latest_users') }}</xf:title>
+
+<xf:if is="$users is not empty">
+	<div class="block">
+		<div class="block-outer">
+			<div class="block-outer-main">
+				<xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false" aria-haspopup="true">
+					{{ phrase('sort_by:') }} {{ $sortOptions.{$order} ?: phrase('user_name') }}
+				</xf:button>
+
+				<div class="menu" data-menu="menu" aria-hidden="true">
+					<div class="menu-content">
+						<h3 class="menu-header">{{ phrase('sort_by...') }}</h3>
+						<xf:foreach loop="$sortOptions" key="$sortKey" value="$sortName">
+							<a href="{{ link('users/latest', null, {'order': $sortKey}) }}"
+							   class="menu-linkRow {{ $order == $sortKey ? 'is-selected' : '' }}">
+								{$sortName}
+							</a>
+						</xf:foreach>
+					</div>
+				</div>
+			</div>
+			<xf:macro template="filter_macros" name="quick_filter" arg-key="users"
+					  arg-ajax="{{ link('users/latest', null, {'order': $order, 'direction': $direction}) }}"
+					  arg-class="block-outer-opposite" />
+		</div>
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:foreach loop="$users" value="$user">
+						<xf:datarow>
+							<xf:cell class="dataList-cell--min dataList-cell--image dataList-cell--imageSmall"
+									 href="{{ link('users/edit', $user) }}">
+								<xf:avatar user="$user" size="s" href="" />
+							</xf:cell>
+							<xf:main href="{{ link('users/edit', $user) }}" label="{$user.username}"
+									 hint="{$user.email}" />
+							<xf:delete href="{{ link('users/delete', $user) }}" />
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($users) }}</span>
+			</div>
+		</div>
+
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+			link="users/latest"
+			params="{{ {'order': $order, 'direction': $direction} }}"
+			wrapperclass="js-filterHide block-outer block-outer--after" />
+	</div>
+<xf:else />
+	<div class="blockMessage">{{ phrase('no_records_matched') }}</div>
+</xf:if>

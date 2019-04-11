@@ -1,0 +1,1 @@
+Show daily statistics in forum statistics widget

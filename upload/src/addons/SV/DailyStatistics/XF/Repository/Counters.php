@@ -76,7 +76,7 @@ class Counters extends XFCP_Counters
             ];
         }
 
-        if (isset($addOns['XFRM']) && $addOns['XFRM'] >= 2000010)
+        if (isset($addOns['XFMG']) && $addOns['XFMG'] >= 2000010)
         {
             $definition['mediaItems'] = [
                 'today' => ['getMediaCountForDailyStatistics', 1],

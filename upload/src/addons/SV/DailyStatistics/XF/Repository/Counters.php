@@ -208,7 +208,7 @@ class Counters extends XFCP_Counters
 
         $key = $public ? 'svDailyStatistics_publicWidgetStatistics' : 'svDailyStatistics_dashboardStatistics';
         $options = $this->app()->options();
-        if ($options->offsetExists($key))
+        if (!$options->offsetExists($key))
         {
             return [];
         }

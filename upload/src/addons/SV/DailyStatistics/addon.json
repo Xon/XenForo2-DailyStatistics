@@ -2,7 +2,7 @@
     "legacy_addon_id": "DailyStats",
     "title": "Daily Statistics",
     "description": "Extended Statistics for your forum",
-    "version_id": 2000000,
+    "version_id": 2000001,
     "version_string": "2.0.0",
     "dev": "Atelier Aphelion",
     "dev_url": "https://atelieraphelion.com",

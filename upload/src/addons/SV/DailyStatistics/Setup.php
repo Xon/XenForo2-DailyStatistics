@@ -22,7 +22,7 @@ class Setup extends AbstractSetup
     use StepRunnerUpgradeTrait;
     use StepRunnerUninstallTrait;
 
-    public function upgrade2000000Step1()
+    public function upgrade2000001Step1()
     {
         $this->renamePermission(
             'MWSDailyStats', 'MWSviewStats',

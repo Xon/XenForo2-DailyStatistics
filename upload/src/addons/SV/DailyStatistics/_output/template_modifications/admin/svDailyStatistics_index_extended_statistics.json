@@ -4,6 +4,6 @@
     "execution_order": 10,
     "enabled": true,
     "action": "str_replace",
-    "find": "<xf:if is=\"$fileChecks is not empty\">",
+    "find": "<div class=\"iconicLinks\">",
     "replace": "<xf:include template=\"svDailyStatistics_index_extended_statistics\" />\n\n\n$0"
 }

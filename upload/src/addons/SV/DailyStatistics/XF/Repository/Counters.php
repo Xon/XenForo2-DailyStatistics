@@ -34,10 +34,9 @@ class Counters extends XFCP_Counters
             {
                 list ($func, $days) = $funcOptions;
                 $callable = \is_callable($func) || is_array($func) ? $func : [$this, $func];
-                $forumStatisticsCacheData[$statisticType][$type] = $callable($getTimestamp($days));
+                $forumStatisticsCacheData['svDailyStatistics'][$statisticType][$type] = $callable($getTimestamp($days));
             }
         }
-
 
         return $forumStatisticsCacheData;
     }

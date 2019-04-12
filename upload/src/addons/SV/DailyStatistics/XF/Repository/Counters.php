@@ -179,52 +179,69 @@ class Counters extends XFCP_Counters
     }
 
     /**
+     * @param bool $public
      * @param bool $applyPermissions
      * @param bool $hideDisabled
-     *
      * @return array
      */
-    public function getExtendedStatistics($applyPermissions = true, $hideDisabled = true)
+    public function getExtendedStatistics($public, $applyPermissions = true, $hideDisabled = true)
     {
+        /** @var \SV\DailyStatistics\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
 
-        $extendedStatistics = [];
-        if ($applyPermissions ? $visitor->hasAdminPermission('viewStatistics') : true)
+        if ($applyPermissions)
         {
-            /** @noinspection PhpUndefinedFieldInspection */
-            $forumStatistics = $this->app()->forumStatistics;
-            $dashboardStatistics = $this->app()->options()->svDailyStatistics_dashboardStatistics;
-
-            $definition = $this->getExtendForumStatisticsDefinition();
-            foreach ($definition as $statisticType => $stats)
+            if ($public)
             {
-                $statistics = empty($forumStatistics['svDailyStatistics'][$statisticType])
-                    ? [
-                        'today' => 0,
-                        'week'  => 0,
-                        'month' => 0,
-                    ]
-                    : $forumStatistics['svDailyStatistics'][$statisticType];
-
-                if ($applyPermissions &&
-                    in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
-                    !$visitor->hasAdminPermission('user')
-                )
+                if (!$visitor->canViewDailyStatistics())
                 {
-                    continue;
+                    return [];
                 }
-
-                if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
+            }
+            else
+            {
+                if (!$visitor->hasAdminPermission('viewStatistics'))
                 {
-                    continue;
+                    return [];
                 }
-
-                $extendedStatistics[$statisticType] = [
-                    'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),
-                    'stats' => $statistics
-                ];
             }
         }
+
+        $key = $public ? 'svDailyStatistics_publicWidgetStatistics' : 'svDailyStatistics_dashboardStatistics';
+        $options = $this->app()->options();
+        if ($options->offsetExists($key))
+        {
+            return [];
+        }
+
+        $dashboardStatistics = $options->offsetGet($key);
+        $extendedStatistics = [];
+
+        /** @noinspection PhpUndefinedFieldInspection */
+        $forumStatistics = $this->app()->forumStatistics;
+
+        $definition = $this->getExtendForumStatisticsDefinition();
+        foreach ($definition as $statisticType => $stats)
+        {
+            $statistics = empty($forumStatistics['svDailyStatistics'][$statisticType])
+                ? [
+                    'today' => 0,
+                    'week'  => 0,
+                    'month' => 0,
+                ]
+                : $forumStatistics['svDailyStatistics'][$statisticType];
+
+            if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
+            {
+                continue;
+            }
+
+            $extendedStatistics[$statisticType] = [
+                'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),
+                'stats' => $statistics
+            ];
+        }
+
 
         return $extendedStatistics;
     }

@@ -26,7 +26,7 @@ class Index extends XFCP_Index
             $countersRepo = $this->repository('XF:Counters');
             $countersRepo->rebuildForumStatisticsCache();
 
-            $reply->setParam('extendedStatistics', $countersRepo->getExtendedStatistics());
+            $reply->setParam('extendedStatistics', $countersRepo->getExtendedStatistics(false));
         }
 
         return $reply;

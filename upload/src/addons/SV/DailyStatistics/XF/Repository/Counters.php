@@ -222,6 +222,19 @@ class Counters extends XFCP_Counters
         $definition = $this->getExtendForumStatisticsDefinition();
         foreach ($definition as $statisticType => $stats)
         {
+            if (!$public && $applyPermissions &&
+                in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
+                !$visitor->hasAdminPermission('user')
+            )
+            {
+                continue;
+            }
+
+            if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
+            {
+                continue;
+            }
+
             $statistics = empty($forumStatistics['svDailyStatistics'][$statisticType])
                 ? [
                     'today' => 0,
@@ -229,11 +242,6 @@ class Counters extends XFCP_Counters
                     'month' => 0,
                 ]
                 : $forumStatistics['svDailyStatistics'][$statisticType];
-
-            if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
-            {
-                continue;
-            }
 
             $extendedStatistics[$statisticType] = [
                 'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),

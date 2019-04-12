@@ -1,4 +1,4 @@
-<xf:if is="$xf.options.svDailyStatistics_showInForumStatisticsWidget">
+<xf:if is="$xf.visitor.canViewDailyStatistics() && $xf.options.svDailyStatistics_showInForumStatisticsWidget">
 	<xf:if is="$forumStatistics.svDailyStatistics.latestUsers is not empty">
 		<xf:macro name="stat_block"
 				  arg-label="{{ phrase('svDailyStatistics_new_members_today') }}"

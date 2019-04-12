@@ -9,6 +9,11 @@ namespace SV\DailyStatistics\XF\Admin\Controller
 	class XFCP_User extends \XF\Admin\Controller\User {}
 }
 
+namespace SV\DailyStatistics\XF\Entity
+{
+	class XFCP_User extends \XF\Entity\User {}
+}
+
 namespace SV\DailyStatistics\XF\Repository
 {
 	class XFCP_Counters extends \XF\Repository\Counters {}

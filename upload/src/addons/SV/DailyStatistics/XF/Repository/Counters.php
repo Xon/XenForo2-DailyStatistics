@@ -27,49 +27,66 @@ class Counters extends XFCP_Counters
             return \XF::$time - $days * 86400;
         };
 
-        $forumStatisticsCacheData['svDailyStatistics'] = [
+        $definition = $this->getExtendForumStatisticsDefinition();
+        foreach($definition as $statisticType => $stats)
+        {
+            foreach ($stats as $type => $funcOptions)
+            {
+                list ($func, $days) = $funcOptions;
+                $callable = \is_callable($func) || is_array($func) ? $func : [$this, $func];
+                $forumStatisticsCacheData[$statisticType][$type] = $callable($getTimestamp($days));
+            }
+        }
+
+
+        return $forumStatisticsCacheData;
+    }
+
+    public function getExtendForumStatisticsDefinition()
+    {
+        $definition = [
             'latestUsers' => [
-                'today' => $this->getUsersCountForDailyStatistics($getTimestamp(1)),
-                'week' => $this->getUsersCountForDailyStatistics($getTimestamp(7)),
-                'month' => $this->getUsersCountForDailyStatistics($getTimestamp(30))
+                'today' => ['getUsersCountForDailyStatistics', 1],
+                'week' => ['getUsersCountForDailyStatistics', 7],
+                'month' => ['getUsersCountForDailyStatistics', 30],
             ],
             'activeUsers' => [
-                'today' => $this->getUsersCountForDailyStatistics(0, $getTimestamp(1)),
-                'week' => $this->getUsersCountForDailyStatistics(0, $getTimestamp(7)),
-                'month' => $this->getUsersCountForDailyStatistics(0, $getTimestamp(30))
+                'today' => ['getUsersCountForDailyStatistics', 1],
+                'week' => ['getUsersCountForDailyStatistics', 7],
+                'month' => ['getUsersCountForDailyStatistics', 30],
             ],
             'threads' => [
-                'today' => $this->getThreadsCountForDailyStatistics($getTimestamp(1)),
-                'week' => $this->getThreadsCountForDailyStatistics($getTimestamp(7)),
-                'month' => $this->getThreadsCountForDailyStatistics($getTimestamp(30))
+                'today' => ['getThreadsCountForDailyStatistics', 1],
+                'week' => ['getThreadsCountForDailyStatistics', 7],
+                'month' => ['getThreadsCountForDailyStatistics', 30],
             ],
             'posts' => [
-                'today' => $this->getPostsCountForDailyStatistics($getTimestamp(1)),
-                'week' => $this->getPostsCountForDailyStatistics($getTimestamp(7)),
-                'month' => $this->getPostsCountForDailyStatistics($getTimestamp(30))
+                'today' => ['getPostsCountForDailyStatistics', 1],
+                'week' => ['getPostsCountForDailyStatistics', 7],
+                'month' => ['getPostsCountForDailyStatistics', 30],
             ]
         ];
 
         $addOns = \XF::app()->container('addon.cache');
         if (isset($addOns['XFRM']) && $addOns['XFRM'] >= 2000010)
         {
-            $forumStatisticsCacheData['svDailyStatistics']['resources'] = [
-                'today' => $this->getResourceCountForDailyStatistics($getTimestamp(1)),
-                'week' => $this->getResourceCountForDailyStatistics($getTimestamp(7)),
-                'month' => $this->getResourceCountForDailyStatistics($getTimestamp(30)),
+            $definition['resources'] = [
+                'today' => ['getResourceCountForDailyStatistics', 1],
+                'week' => ['getResourceCountForDailyStatistics', 7],
+                'month' => ['getResourceCountForDailyStatistics', 30],
             ];
         }
 
         if (isset($addOns['XFRM']) && $addOns['XFRM'] >= 2000010)
         {
-            $forumStatisticsCacheData['svDailyStatistics']['mediaItems'] = [
-                'today' => $this->getMediaCountForDailyStatistics($getTimestamp(1)),
-                'week' => $this->getMediaCountForDailyStatistics($getTimestamp(7)),
-                'month' => $this->getMediaCountForDailyStatistics($getTimestamp(30)),
+            $definition['mediaItems'] = [
+                'today' => ['getMediaCountForDailyStatistics', 1],
+                'week' => ['getMediaCountForDailyStatistics', 7],
+                'month' => ['getMediaCountForDailyStatistics', 30],
             ];
         }
 
-        return $forumStatisticsCacheData;
+        return $definition;
     }
 
     /**
@@ -178,28 +195,34 @@ class Counters extends XFCP_Counters
             $forumStatistics = $this->app()->forumStatistics;
             $dashboardStatistics = $this->app()->options()->svDailyStatistics_dashboardStatistics;
 
-            if (!empty($forumStatistics['svDailyStatistics']))
+            $definition = $this->getExtendForumStatisticsDefinition();
+            foreach ($definition as $statisticType => $stats)
             {
-                foreach ($forumStatistics['svDailyStatistics'] AS $statisticType => $statistics)
+                $statistics = empty($forumStatistics['svDailyStatistics'][$statisticType])
+                    ? [
+                        'today' => 0,
+                        'week'  => 0,
+                        'month' => 0,
+                    ]
+                    : $forumStatistics['svDailyStatistics'][$statisticType];
+
+                if ($applyPermissions &&
+                    in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
+                    !$visitor->hasAdminPermission('user')
+                )
                 {
-                    if ($applyPermissions &&
-                        in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
-                        !$visitor->hasAdminPermission('user')
-                    )
-                    {
-                        continue;
-                    }
-
-                    if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
-                    {
-                        continue;
-                    }
-
-                    $extendedStatistics[$statisticType] = [
-                        'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),
-                        'stats' => $statistics
-                    ];
+                    continue;
                 }
+
+                if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
+                {
+                    continue;
+                }
+
+                $extendedStatistics[$statisticType] = [
+                    'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),
+                    'stats' => $statistics
+                ];
             }
         }
 

@@ -13,7 +13,7 @@ use SV\DailyStatistics\XF\Repository\Counters as CountersRepo;
 class Index extends XFCP_Index
 {
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function actionIndex()
     {

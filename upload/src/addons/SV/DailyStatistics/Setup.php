@@ -9,6 +9,11 @@ use XF\AddOn\StepRunnerUninstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
 use XF\Repository\Counters as CountersRepo;
 
+/**
+ * Class Setup
+ *
+ * @package SV\DailyStatistics
+ */
 class Setup extends AbstractSetup
 {
     // from https://github.com/Xon/XenForo2-Utils cloned to src/addons/SV/Utils
@@ -19,9 +24,15 @@ class Setup extends AbstractSetup
 
     public function upgrade2000000Step1()
     {
-        $this->renamePermission('MWSDailyStats', 'MWSviewStats', 'general', 'svViewExtraStats');
+        $this->renamePermission(
+            'MWSDailyStats', 'MWSviewStats',
+            'general', 'svViewExtraStats'
+        );
     }
 
+    /**
+     * @param array $stateChanges
+     */
     public function postInstall(array &$stateChanges)
     {
         /** @var CountersRepo $countersRepo */
@@ -29,6 +40,10 @@ class Setup extends AbstractSetup
         $countersRepo->rebuildForumStatisticsCache();
     }
 
+    /**
+     * @param       $previousVersion
+     * @param array $stateChanges
+     */
     public function postUpgrade($previousVersion, array &$stateChanges)
     {
         /** @var CountersRepo $countersRepo */

@@ -174,6 +174,7 @@ class Counters extends XFCP_Counters
         $extendedStatistics = [];
         if ($applyPermissions ? $visitor->hasAdminPermission('viewStatistics') : true)
         {
+            /** @noinspection PhpUndefinedFieldInspection */
             $forumStatistics = $this->app()->forumStatistics;
             $dashboardStatistics = $this->app()->options()->svDailyStatistics_dashboardStatistics;
 
@@ -181,14 +182,12 @@ class Counters extends XFCP_Counters
             {
                 foreach ($forumStatistics['svDailyStatistics'] AS $statisticType => $statistics)
                 {
-                    if ($applyPermissions)
+                    if ($applyPermissions &&
+                        in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
+                        !$visitor->hasAdminPermission('user')
+                    )
                     {
-                        if (in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
-                            !$visitor->hasAdminPermission('user')
-                        )
-                        {
-                            continue;
-                        }
+                        continue;
                     }
 
                     if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))

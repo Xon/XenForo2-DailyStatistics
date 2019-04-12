@@ -14,7 +14,7 @@ class User extends XFCP_User
      *
      * @return bool
      */
-    public function canViewDailyStatistics(&$error = null)
+    public function canViewDailyStatistics(/** @noinspection PhpUnusedParameterInspection */ &$error = null)
     {
         return $this->hasPermission('general', 'svViewExtraStats');
     }

@@ -51,7 +51,7 @@ class Setup extends AbstractSetup
             $extend[] = 'mediaItems';
         }
 
-        $this->renameOption('dailystats_acp_extended','svDailyStatistics_extendedStatsInDashboard');
+        $this->renameOption('dailystats_acp_extended', 'svDailyStatistics_extendedStatsInDashboard');
         /** @var \XF\Entity\Option $option */
         $option = \XF::finder('XF:Option')
                      ->whereId('svDailyStatistics_publicWidgetStatistics')
@@ -67,9 +67,9 @@ class Setup extends AbstractSetup
             $option->edit_format_params = 'option_template_svDailyStatistics_dashboardStatistics';
             $option->data_type = 'array';
             $option->sub_options = ['*'];
+            $option->option_value = $extend;
+            $option->save();
         }
-        $option->option_value = $extend;
-        $option->saveIfChanged();
 
         // ACP extend option
         $extend = [];
@@ -111,9 +111,9 @@ class Setup extends AbstractSetup
             $option->edit_format_params = 'option_template_svDailyStatistics_dashboardStatistics';
             $option->data_type = 'array';
             $option->sub_options = ['*'];
+            $option->option_value = $extend;
+            $option->save();
         }
-        $option->option_value = $extend;
-        $option->saveIfChanged();
     }
 
     protected function hasOptionSet($optionName)

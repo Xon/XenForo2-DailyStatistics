@@ -1,0 +1,1 @@
+Show extended statistics in dashboard

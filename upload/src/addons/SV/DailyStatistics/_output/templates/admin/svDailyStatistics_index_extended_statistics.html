@@ -1,0 +1,30 @@
+<xf:if is="$xf.options.svDailyStatistics_extendedStatsInDashboard && $extendedStatistics is not empty">
+	<div class="block">
+		<div class="block-container">
+			<h2 class="block-header">
+				<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_extended_statistics') ? 'is-active' : '' }}" data-xf-click="toggle" data-xf-init="toggle-storage" data-storage-key="collapse_extended_statistics" data-target="#js-collapse-extended-statistics">
+					{{ phrase('svDailyStatistics_extended_statistics') }}
+				</span>
+			</h2>
+			<div class="block-body block-body--collapsible {{ !is_toggled('collapse_extended_statistics') ? 'is-active' : '' }}" id="js-collapse-extended-statistics">
+				<xf:datalist data-xf-init="responsive-data-list">
+					<xf:datarow rowtype="header">
+						<xf:cell></xf:cell>
+						<xf:cell>{{ phrase('svDailyStatistics_today') }}</xf:cell>
+						<xf:cell>{{ phrase('svDailyStatistics_this_week') }}</xf:cell>
+						<xf:cell>{{ phrase('svDailyStatistics_this_month') }}</xf:cell>
+					</xf:datarow>
+					
+					<xf:foreach loop="$extendedStatistics" value="$data">
+						<xf:datarow>
+							<xf:cell>{{ $data.label }}</xf:cell>
+							<xf:foreach loop="$data.stats" value="$count">
+								<xf:cell>{$count|number}</xf:cell>
+							</xf:foreach>
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+		</div>
+	</div>
+</xf:if>

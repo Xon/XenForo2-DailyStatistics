@@ -1,0 +1,1 @@
+If checked, extended statistics for supported content types will be shown in dashboard.

@@ -2,7 +2,8 @@
 
 namespace SV\DailyStatistics\XF\Admin\Controller;
 
-use XF\Repository\Counters as CountersRepo;
+use XF\Mvc\Reply\View;
+use SV\DailyStatistics\XF\Repository\Counters as CountersRepo;
 
 /**
  * Class Index
@@ -16,10 +17,18 @@ class Index extends XFCP_Index
      */
     public function actionIndex()
     {
-        /** @var CountersRepo $countersRepo */
-        $countersRepo = $this->repository('XF:Counters');
-        $countersRepo->rebuildForumStatisticsCache();
+        $reply =  parent::actionIndex();
+        $visitor = \XF::visitor();
 
-        return parent::actionIndex();
+        if ($reply instanceof View && $visitor->hasAdminPermission('viewStatistics'))
+        {
+            /** @var CountersRepo $countersRepo */
+            $countersRepo = $this->repository('XF:Counters');
+            $countersRepo->rebuildForumStatisticsCache();
+
+            $reply->setParam('extendedStatistics', $countersRepo->getExtendedStatistics());
+        }
+
+        return $reply;
     }
 }

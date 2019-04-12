@@ -1,0 +1,11 @@
+<xf:checkboxrow name="{$inputName}"
+			 label="{$option.title}"
+			 hint="{$hintHtml}"
+			 explain="{$explainHtml}"
+			 html="{$listedHtml}">
+	<xf:foreach loop="$xf.app.em.getRepository('XF:Counters').getExtendedStatistics(false, false)"
+				key="$type"
+				value="$data">
+		<xf:option value="{$type}" label="{$data.label}" checked="{{ in_array($type, $option.option_value) }}" />
+	</xf:foreach>
+</xf:checkboxrow>

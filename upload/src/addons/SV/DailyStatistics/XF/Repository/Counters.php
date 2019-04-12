@@ -160,4 +160,50 @@ class Counters extends XFCP_Counters
             ->where('media_date', '>=', $startDate)
             ->total();
     }
+
+    /**
+     * @param bool $applyPermissions
+     * @param bool $hideDisabled
+     *
+     * @return array
+     */
+    public function getExtendedStatistics($applyPermissions = true, $hideDisabled = true)
+    {
+        $visitor = \XF::visitor();
+
+        $extendedStatistics = [];
+        if ($applyPermissions ? $visitor->hasAdminPermission('viewStatistics') : true)
+        {
+            $forumStatistics = $this->app()->forumStatistics;
+            $dashboardStatistics = $this->app()->options()->svDailyStatistics_dashboardStatistics;
+
+            if (!empty($forumStatistics['svDailyStatistics']))
+            {
+                foreach ($forumStatistics['svDailyStatistics'] AS $statisticType => $statistics)
+                {
+                    if ($applyPermissions)
+                    {
+                        if (in_array($statisticType, ['latestUsers', 'activeUsers'], true) &&
+                            !$visitor->hasAdminPermission('user')
+                        )
+                        {
+                            continue;
+                        }
+                    }
+
+                    if ($hideDisabled && !in_array($statisticType, $dashboardStatistics, true))
+                    {
+                        continue;
+                    }
+
+                    $extendedStatistics[$statisticType] = [
+                        'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),
+                        'stats' => $statistics
+                    ];
+                }
+            }
+        }
+
+        return $extendedStatistics;
+    }
 }

@@ -109,7 +109,7 @@ class Counters extends XFCP_Counters
 
         return $threadFinder
             ->where('discussion_state', 'visible')
-            ->where('post_date', $startDate)
+            ->where('post_date', '>=', $startDate)
             ->total();
     }
 

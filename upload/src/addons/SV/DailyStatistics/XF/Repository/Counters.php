@@ -124,7 +124,6 @@ class Counters extends XFCP_Counters
         $postFinder = $this->finder('XF:Post');
 
         return $postFinder
-            ->isNotFirstPost()
             ->where('message_state', 'visible')
             ->where('post_date', '>=', $startDate)
             ->total();

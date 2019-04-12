@@ -1,0 +1,1 @@
+Select the content types for which extended statistics will be shown on the public widget

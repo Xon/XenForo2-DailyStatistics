@@ -1,7 +1,7 @@
 {
     "template": "widget_forum_statistics",
     "description": "Add additional statistics",
-    "execution_order": 10,
+    "execution_order": 7125,
     "enabled": true,
     "action": "preg_replace",
     "find": "#(<div class=\"block-body block-row.*?\".*?>.*?)(<\\/div>)#si",

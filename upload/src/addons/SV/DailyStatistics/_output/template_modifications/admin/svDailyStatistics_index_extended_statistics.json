@@ -1,7 +1,7 @@
 {
     "template": "index",
     "description": "Show extended statistics block if enabled",
-    "execution_order": 10,
+    "execution_order": 7125,
     "enabled": true,
     "action": "str_replace",
     "find": "<div class=\"iconicLinks\">",

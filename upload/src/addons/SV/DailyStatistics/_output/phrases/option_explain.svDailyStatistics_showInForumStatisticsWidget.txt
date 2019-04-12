@@ -1,0 +1,1 @@
+If checked, basic statistics for supported content types will be shown in the forum statistics widget.

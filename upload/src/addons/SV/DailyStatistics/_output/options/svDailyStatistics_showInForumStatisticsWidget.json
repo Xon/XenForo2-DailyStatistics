@@ -7,6 +7,6 @@
     "validation_method": "",
     "default_value": "1",
     "relations": {
-        "stats": 400
+        "svDailyStatistics": 10
     }
 }

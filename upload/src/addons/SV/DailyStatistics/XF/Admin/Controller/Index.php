@@ -22,10 +22,6 @@ class Index extends XFCP_Index
 
         if ($reply instanceof View && $visitor->hasAdminPermission('viewStatistics'))
         {
-            /** @var CountersRepo $countersRepo */
-            $countersRepo = $this->repository('XF:Counters');
-            $countersRepo->rebuildForumStatisticsCache();
-
             $reply->setParam('extendedStatistics', $countersRepo->getExtendedStatistics(false));
         }
 

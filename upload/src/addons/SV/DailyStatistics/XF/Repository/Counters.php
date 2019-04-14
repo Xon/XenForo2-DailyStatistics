@@ -215,9 +215,7 @@ class Counters extends XFCP_Counters
 
         $dashboardStatistics = $options->offsetGet($key);
         $extendedStatistics = [];
-
-        /** @noinspection PhpUndefinedFieldInspection */
-        $forumStatistics = $this->app()->forumStatistics;
+        $forumStatistics = $this->app()->get('forumStatistics');
 
         $definition = $this->getExtendForumStatisticsDefinition();
         foreach ($definition as $statisticType => $stats)

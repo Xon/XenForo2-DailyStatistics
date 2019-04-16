@@ -3,31 +3,31 @@
 	<xf:if is="$extendedStatistics.latestUsers is not empty">
 		<xf:macro name="stat_block"
 				  arg-label="{{ phrase('svDailyStatistics_new_members_today') }}"
-				  arg-count="{$extendedStatistics.latestUsers.today}" />
+				  arg-count="{$extendedStatistics.latestUsers.stats.today}" />
 	</xf:if>
 
 	<xf:if is="$extendedStatistics.threads is not empty">
 		<xf:macro name="stat_block"
 				  arg-label="{{ phrase('svDailyStatistics_new_threads_today') }}"
-				  arg-count="{$extendedStatistics.threads.today}" />
+				  arg-count="{$extendedStatistics.threads.stats.today}" />
 	</xf:if>
 
 	<xf:if is="$extendedStatistics.posts is not empty">
 		<xf:macro name="stat_block"
 				  arg-label="{{ phrase('svDailyStatistics_new_posts_today') }}"
-				  arg-count="{$extendedStatistics.posts.today}" />
+				  arg-count="{$extendedStatistics.posts.stats.today}" />
 	</xf:if>
 
 	<xf:if is="$extendedStatistics.resource is not empty">
 		<xf:macro name="stat_block"
 				  arg-label="{{ phrase('svDailyStatistics_new_resourcess_today') }}"
-				  arg-count="{$extendedStatistics.resources.today}" />
+				  arg-count="{$extendedStatistics.resources.stats.today}" />
 	</xf:if>
 
 	<xf:if is="$extendedStatistics.mediaItems is not empty">
 		<xf:macro name="stat_block"
 				  arg-label="{{ phrase('svDailyStatistics_new_media_items_today') }}"
-				  arg-count="{$extendedStatistics.mediaItems.today}" />
+				  arg-count="{$extendedStatistics.mediaItems.stats.today}" />
 	</xf:if>
 </xf:if>
 

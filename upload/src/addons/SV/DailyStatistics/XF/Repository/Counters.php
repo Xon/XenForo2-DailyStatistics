@@ -32,9 +32,11 @@ class Counters extends XFCP_Counters
         {
             foreach ($stats as $type => $funcOptions)
             {
-                list ($func, $days) = $funcOptions;
+                $func = $funcOptions[0];
+                $time1 = isset($funcOptions[1]) ? $funcOptions[1] : 0;
+                $time2 = isset($funcOptions[2]) ? $funcOptions[2] : 0;
                 $callable = \is_callable($func) || is_array($func) ? $func : [$this, $func];
-                $forumStatisticsCacheData['svDailyStatistics'][$statisticType][$type] = $callable($getTimestamp($days));
+                $forumStatisticsCacheData['svDailyStatistics'][$statisticType][$type] = $callable($time1 ? $getTimestamp($time1) : 0, $time2 ? $getTimestamp($time2) : 0);
             }
         }
 
@@ -50,9 +52,9 @@ class Counters extends XFCP_Counters
                 'month' => ['getUsersCountForDailyStatistics', 30],
             ],
             'activeUsers' => [
-                'today' => ['getUsersCountForDailyStatistics', 1],
-                'week' => ['getUsersCountForDailyStatistics', 7],
-                'month' => ['getUsersCountForDailyStatistics', 30],
+                'today' => ['getUsersCountForDailyStatistics', 0, 1],
+                'week' => ['getUsersCountForDailyStatistics', 0, 7],
+                'month' => ['getUsersCountForDailyStatistics', 0, 30],
             ],
             'threads' => [
                 'today' => ['getThreadsCountForDailyStatistics', 1],
@@ -96,6 +98,11 @@ class Counters extends XFCP_Counters
      */
     protected function getUsersCountForDailyStatistics($registeredSince = 0, $hasBeenActiveSince = 0)
     {
+        if (!$registeredSince && !$hasBeenActiveSince)
+        {
+            return 0;
+        }
+
         /** @var UserFinder $userFinder */
         $userFinder = $this->finder('XF:User');
         $userFinder->isValidUser();

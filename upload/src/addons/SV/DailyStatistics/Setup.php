@@ -59,6 +59,10 @@ class Setup extends AbstractSetup
             /** @var \XF\Entity\Option $option */
             $option = \XF::em()->create('XF:Option');
             $option->option_id = 'svDailyStatistics_publicWidgetStatistics';
+            if ($option->hasBehavior('XF:DevOutputWritable'))
+            {
+                $option->getBehavior('XF:DevOutputWritable')->setOption('write_dev_output', false);
+            }
             $option->setOption('verify_validation_callback', false);
             $option->setOption('verify_value', false);
             $option->addon_id = $this->addOn->getAddOnId();
@@ -103,6 +107,10 @@ class Setup extends AbstractSetup
             /** @var \XF\Entity\Option $option */
             $option = \XF::em()->create('XF:Option');
             $option->option_id = 'svDailyStatistics_dashboardStatistics';
+            if ($option->hasBehavior('XF:DevOutputWritable'))
+            {
+                $option->getBehavior('XF:DevOutputWritable')->setOption('write_dev_output', false);
+            }
             $option->setOption('verify_validation_callback', false);
             $option->setOption('verify_value', false);
             $option->addon_id = $this->addOn->getAddOnId();

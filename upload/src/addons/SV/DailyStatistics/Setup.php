@@ -134,8 +134,27 @@ class Setup extends AbstractSetup
         $this->renamePhrases([
             'svDailyStatistics_new_resourcess_today' => 'svDailyStatistics_new_resources_today',
         ]);
+    }
 
+    public function upgrade2010000Step2()
+    {
         @unlink(__DIR__.'/icon.png');
+    }
+
+    public function upgrade2010000Step3()
+    {
+        /** @var \XF\Entity\Option $option */
+        $option = \XF::finder('XF:Option')
+                     ->whereId('svDailyStatistics_dashboardStatistics')
+                     ->fetchOne();
+        if ($option !== null)
+        {
+            $extend = (array)($option->option_value ?? []);
+            $extend[] = 'threadmarks';
+
+            $option->option_value = $extend;
+            $option->save();
+        }
     }
 
     public function postInstall(array &$stateChanges)

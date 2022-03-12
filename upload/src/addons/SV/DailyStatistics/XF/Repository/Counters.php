@@ -91,6 +91,15 @@ class Counters extends XFCP_Counters
             ];
         }
 
+        if (\XF::isAddOnActive('SV/Threadmarks', 2000000))
+        {
+            $definition['threadmarks'] = [
+                'today' => ['getThreadmarkCountForDailyStatistics', 1],
+                'week'  => ['getThreadmarkCountForDailyStatistics', 7],
+                'month' => ['getThreadmarkCountForDailyStatistics', 30],
+            ];
+        }
+
         return $definition;
     }
 
@@ -147,6 +156,14 @@ class Counters extends XFCP_Counters
         return $this->finder('XFMG:MediaItem')
                     ->where('media_state', 'visible')
                     ->where('media_date', '>=', $startDate)
+                    ->total();
+    }
+
+    protected function getThreadmarkCountForDailyStatistics(int $startDate): int
+    {
+        return $this->finder('SV\Threadmarks:Threadmark')
+                    ->where('message_state', 'visible')
+                    ->where('threadmark_date', '>=', $startDate)
                     ->total();
     }
 

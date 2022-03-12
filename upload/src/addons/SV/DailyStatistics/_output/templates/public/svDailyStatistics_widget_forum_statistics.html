@@ -1,45 +1,9 @@
 <xf:if is="is_addon_active('SV/DailyStatistics') && $xf.options.svDailyStatistics_showInForumStatisticsWidget">
 	<xf:set var="$extendedStatistics" value="{{ $xf.app.em.getRepository('XF:Counters').getExtendedStatistics(true) }}"/>
-	<xf:if is="$extendedStatistics.latestUsers is not empty">
-		<xf:macro name="stat_block"
-				  arg-label="{{ phrase('svDailyStatistics_new_members_today') }}"
-				  arg-count="{$extendedStatistics.latestUsers.stats.today}" />
-	</xf:if>
-
-	<xf:if is="$extendedStatistics.threads is not empty">
-		<xf:macro name="stat_block"
-				  arg-label="{{ phrase('svDailyStatistics_new_threads_today') }}"
-				  arg-count="{$extendedStatistics.threads.stats.today}" />
-	</xf:if>
-
-	<xf:if is="$extendedStatistics.posts is not empty">
-		<xf:macro name="stat_block"
-				  arg-label="{{ phrase('svDailyStatistics_new_posts_today') }}"
-				  arg-count="{$extendedStatistics.posts.stats.today}" />
-	</xf:if>
-
-	<xf:if is="$extendedStatistics.resource is not empty">
-		<xf:macro name="stat_block"
-				  arg-label="{{ phrase('svDailyStatistics_new_resources_today') }}"
-				  arg-count="{$extendedStatistics.resources.stats.today}" />
-	</xf:if>
-
-	<xf:if is="$extendedStatistics.mediaItems is not empty">
-		<xf:macro name="stat_block"
-				  arg-label="{{ phrase('svDailyStatistics_new_media_items_today') }}"
-				  arg-count="{$extendedStatistics.mediaItems.stats.today}" />
-	</xf:if>
-
-    <xf:if is="$extendedStatistics.threadmarks is not empty">
-        <xf:macro name="stat_block"
-                  arg-label="{{ phrase('svDailyStatistics_new_threadmarks_today') }}"
-                  arg-count="{$extendedStatistics.threadmarks.stats.today}" />
-    </xf:if>
+    <xf:foreach loop="$extendedStatistics" key="$phraseKey" value="$stats">
+        <dl class="pairs pairs--justified {$pairClass}">
+            <dt>{{ phrase_dynamic('svDailyStatistics_new_today.'.$phraseKey) }}</dt>
+            <dd>{$stats.today|number}</dd>
+        </dl>
+    </xf:foreach>
 </xf:if>
-
-<xf:macro name="stat_block" arg-label="!" arg-count="!" arg-pairClass="">
-	<dl class="pairs pairs--justified {$pairClass}">
-		<dt>{{ $label }}</dt>
-		<dd>{$count|number}</dd>
-	</dl>
-</xf:macro>

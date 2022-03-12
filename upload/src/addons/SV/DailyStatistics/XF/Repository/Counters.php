@@ -51,15 +51,15 @@ class Counters extends XFCP_Counters
     public function getExtendForumStatisticsDefinition(): array
     {
         $definition = [
-            'latestUsers' => [
-                'today' => ['getUserCountForDailyStatistics', 1],
-                'week'  => ['getUserCountForDailyStatistics', 7],
-                'month' => ['getUserCountForDailyStatistics', 30],
-            ],
             'activeUsers' => [
                 'today' => ['getUserCountForDailyStatistics', 0, 1],
                 'week'  => ['getUserCountForDailyStatistics', 0, 7],
                 'month' => ['getUserCountForDailyStatistics', 0, 30],
+            ],
+            'latestUsers' => [
+                'today' => ['getUserCountForDailyStatistics', 1],
+                'week'  => ['getUserCountForDailyStatistics', 7],
+                'month' => ['getUserCountForDailyStatistics', 30],
             ],
             'threads'     => [
                 'today' => ['getThreadCountForDailyStatistics', 1],
@@ -224,10 +224,7 @@ class Counters extends XFCP_Counters
                     'month' => 0,
                 ];
 
-            $extendedStatistics[$statisticType] = [
-                'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),
-                'stats' => $statistics
-            ];
+            $extendedStatistics[$statisticType] = $statistics;
         }
 
 

@@ -15,10 +15,10 @@
 						<xf:cell>{{ phrase('svDailyStatistics_this_month') }}</xf:cell>
 					</xf:datarow>
 					
-					<xf:foreach loop="$extendedStatistics" value="$data">
+					<xf:foreach loop="$extendedStatistics" key="$type" value="$stats">
 						<xf:datarow>
-							<xf:cell>{{ $data.label }}</xf:cell>
-							<xf:foreach loop="$data.stats" value="$count">
+							<xf:cell>{{ phrase_dynamic('svDailyStatistics_extended_stat.'.$type) }}</xf:cell>
+							<xf:foreach loop="$stats" value="$count">
 								<xf:cell>{$count|number}</xf:cell>
 							</xf:foreach>
 						</xf:datarow>

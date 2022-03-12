@@ -6,6 +6,6 @@
 	<xf:foreach loop="$xf.app.em.getRepository('XF:Counters').getExtendedStatistics(false, false, false)"
 				key="$type"
 				value="$data">
-		<xf:option value="{$type}" label="{$data.label}" checked="{{ in_array($type, $option.option_value) }}" />
+		<xf:option value="{$type}" label="{{ phrase_dynamic('svDailyStatistics_extended_stat.'.$type) }}" checked="{{ in_array($type, $option.option_value) }}" />
 	</xf:foreach>
 </xf:checkboxrow>

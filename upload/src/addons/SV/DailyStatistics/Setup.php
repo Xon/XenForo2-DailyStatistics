@@ -140,7 +140,13 @@ class Setup extends AbstractSetup
     public function upgrade2010000Step1()
     {
         $this->renamePhrases([
-            'svDailyStatistics_new_resourcess_today' => 'svDailyStatistics_new_resources_today',
+            'svDailyStatistics_new_media_items_today' => 'svDailyStatistics_new_today.mediaItems',
+            'svDailyStatistics_new_members_today' => 'svDailyStatistics_new_today.latestUsers',
+            'svDailyStatistics_new_posts_today' => 'svDailyStatistics_new_today.posts',
+            'svDailyStatistics_new_resources_today' => 'svDailyStatistics_new_today.resources',
+            'svDailyStatistics_new_resourcess_today' => 'svDailyStatistics_new_today.resources',
+            'svDailyStatistics_new_threadmarks_today' => 'svDailyStatistics_new_today.threadmarks',
+            'svDailyStatistics_new_threads_today' => 'svDailyStatistics_new_today.threads',
         ]);
     }
 

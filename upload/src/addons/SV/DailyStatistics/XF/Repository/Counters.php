@@ -7,7 +7,7 @@ use XF\Finder\Thread as ThreadFinder;
 use XF\Finder\Post as PostFinder;
 use XFRM\Finder\ResourceItem as ResourceItemFinder;
 use XFMG\Finder\MediaItem as MediaItemFinder;
-use function is_callable, is_array, in_array;
+use function is_callable, is_string, in_array;
 
 /**
  * Class Counters
@@ -30,10 +30,17 @@ class Counters extends XFCP_Counters
         {
             foreach ($stats as $type => $funcOptions)
             {
-                $func = $funcOptions[0];
+                $callable = $funcOptions[0];
+                if (is_string($callable))
+                {
+                    $callable = [$this, $callable];
+                }
+                if (!is_callable($callable))
+                {
+                    continue;
+                }
                 $time1 = $funcOptions[1] ?? 0;
                 $time2 = $funcOptions[2] ?? 0;
-                $callable = is_callable($func) || is_array($func) ? $func : [$this, $func];
                 $forumStatisticsCacheData['svDailyStatistics'][$statisticType][$type] = $callable($time1 ? $getTimestamp($time1) : 0, $time2 ? $getTimestamp($time2) : 0);
             }
         }
@@ -45,24 +52,24 @@ class Counters extends XFCP_Counters
     {
         $definition = [
             'latestUsers' => [
-                'today' => ['getUsersCountForDailyStatistics', 1],
-                'week'  => ['getUsersCountForDailyStatistics', 7],
-                'month' => ['getUsersCountForDailyStatistics', 30],
+                'today' => ['getUserCountForDailyStatistics', 1],
+                'week'  => ['getUserCountForDailyStatistics', 7],
+                'month' => ['getUserCountForDailyStatistics', 30],
             ],
             'activeUsers' => [
-                'today' => ['getUsersCountForDailyStatistics', 0, 1],
-                'week'  => ['getUsersCountForDailyStatistics', 0, 7],
-                'month' => ['getUsersCountForDailyStatistics', 0, 30],
+                'today' => ['getUserCountForDailyStatistics', 0, 1],
+                'week'  => ['getUserCountForDailyStatistics', 0, 7],
+                'month' => ['getUserCountForDailyStatistics', 0, 30],
             ],
             'threads'     => [
-                'today' => ['getThreadsCountForDailyStatistics', 1],
-                'week'  => ['getThreadsCountForDailyStatistics', 7],
-                'month' => ['getThreadsCountForDailyStatistics', 30],
+                'today' => ['getThreadCountForDailyStatistics', 1],
+                'week'  => ['getThreadCountForDailyStatistics', 7],
+                'month' => ['getThreadCountForDailyStatistics', 30],
             ],
             'posts'       => [
-                'today' => ['getPostsCountForDailyStatistics', 1],
-                'week'  => ['getPostsCountForDailyStatistics', 7],
-                'month' => ['getPostsCountForDailyStatistics', 30],
+                'today' => ['getPostCountForDailyStatistics', 1],
+                'week'  => ['getPostCountForDailyStatistics', 7],
+                'month' => ['getPostCountForDailyStatistics', 30],
             ]
         ];
 
@@ -87,7 +94,7 @@ class Counters extends XFCP_Counters
         return $definition;
     }
 
-    protected function getUsersCountForDailyStatistics(int $registeredSince = 0, int $hasBeenActiveSince = 0): int
+    protected function getUserCountForDailyStatistics(int $registeredSince = 0, int $hasBeenActiveSince = 0): int
     {
         if ($registeredSince === 0 && $hasBeenActiveSince === 0)
         {
@@ -111,7 +118,7 @@ class Counters extends XFCP_Counters
         return $userFinder->total();
     }
 
-    protected function getThreadsCountForDailyStatistics(int $startDate = 0): int
+    protected function getThreadCountForDailyStatistics(int $startDate = 0): int
     {
         /** @var ThreadFinder $threadFinder */
         $threadFinder = $this->finder('XF:Thread');
@@ -122,7 +129,7 @@ class Counters extends XFCP_Counters
             ->total();
     }
 
-    protected function getPostsCountForDailyStatistics(int $startDate): int
+    protected function getPostCountForDailyStatistics(int $startDate): int
     {
         /** @var PostFinder $postFinder */
         $postFinder = $this->finder('XF:Post');

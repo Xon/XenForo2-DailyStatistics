@@ -16,7 +16,11 @@ use function is_callable, is_string, in_array;
  */
 class Counters extends XFCP_Counters
 {
-    public function getForumStatisticsCacheData(): array
+    /**
+     * @return array
+     * @noinspection PhpMissingReturnTypeInspection
+     */
+    public function getForumStatisticsCacheData()
     {
         /** @var array $forumStatisticsCacheData */
         $forumStatisticsCacheData = parent::getForumStatisticsCacheData();

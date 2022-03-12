@@ -1,5 +1,6 @@
 {
     "icon": "fas fa-chart-line",
     "display_order": 9080,
+    "advanced": false,
     "debug_only": false
 }

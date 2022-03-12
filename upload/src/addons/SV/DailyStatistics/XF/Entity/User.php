@@ -10,11 +10,11 @@ namespace SV\DailyStatistics\XF\Entity;
 class User extends XFCP_User
 {
     /**
-     * @param null $error
-     *
+     * @param \XF\Phrase|string|null $error
      * @return bool
+     * @noinspection PhpUnusedParameterInspection
      */
-    public function canViewDailyStatistics(/** @noinspection PhpUnusedParameterInspection */ &$error = null)
+    public function canViewDailyStatistics(&$error = null): bool
     {
         return $this->hasPermission('general', 'svViewExtraStats');
     }

@@ -2,7 +2,8 @@
 
 namespace SV\DailyStatistics\XF\Admin\Controller;
 
-use XF\Mvc\Reply\View;
+use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\View as ViewReply;
 use SV\DailyStatistics\XF\Repository\Counters as CountersRepo;
 
 /**
@@ -13,14 +14,13 @@ use SV\DailyStatistics\XF\Repository\Counters as CountersRepo;
 class Index extends XFCP_Index
 {
     /**
-     * @return View
+     * @return AbstractReply
      */
     public function actionIndex()
     {
-        $reply =  parent::actionIndex();
-        $visitor = \XF::visitor();
+        $reply = parent::actionIndex();
 
-        if ($reply instanceof View && $visitor->hasAdminPermission('viewStatistics'))
+        if ($reply instanceof ViewReply && \XF::visitor()->hasAdminPermission('viewStatistics'))
         {
             /** @var CountersRepo $countersRepo */
             $countersRepo = $this->repository('XF:Counters');

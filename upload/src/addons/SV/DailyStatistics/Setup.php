@@ -51,12 +51,12 @@ class Setup extends AbstractSetup
         }
 
         $this->renameOption('dailystats_acp_extended', 'svDailyStatistics_extendedStatsInDashboard');
-        /** @var \XF\Entity\Option $option */
         $option = \XF::finder('XF:Option')
                      ->whereId('svDailyStatistics_publicWidgetStatistics')
                      ->fetchOne();
-        if (!$option)
+        if ($option === null)
         {
+            /** @var \XF\Entity\Option $option */
             $option = \XF::em()->create('XF:Option');
             $option->option_id = 'svDailyStatistics_publicWidgetStatistics';
             $option->setOption('verify_validation_callback', false);
@@ -95,12 +95,12 @@ class Setup extends AbstractSetup
         }
 
         $this->renameOption('dailystats_forum_home','svDailyStatistics_showInForumStatisticsWidget');
-        /** @var \XF\Entity\Option $option */
         $option = \XF::finder('XF:Option')
                      ->whereId('svDailyStatistics_dashboardStatistics')
                      ->fetchOne();
-        if (!$option)
+        if ($option === null)
         {
+            /** @var \XF\Entity\Option $option */
             $option = \XF::em()->create('XF:Option');
             $option->option_id = 'svDailyStatistics_dashboardStatistics';
             $option->setOption('verify_validation_callback', false);
@@ -146,7 +146,7 @@ class Setup extends AbstractSetup
     }
 
     /**
-     * @param       $previousVersion
+     * @param int|null $previousVersion
      * @param array $stateChanges
      */
     public function postUpgrade($previousVersion, array &$stateChanges)

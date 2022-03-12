@@ -2,8 +2,9 @@
 
 namespace SV\DailyStatistics\XF\Admin\Controller;
 
+use XF\Mvc\Reply\AbstractReply;
 use XF\Searcher\User as UserSearcher;
-use XF\Finder\User as UserFinder;
+use function strlen;
 
 /**
  * Class User
@@ -12,11 +13,7 @@ use XF\Finder\User as UserFinder;
  */
 class User extends XFCP_User
 {
-    /**
-     * @return \XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     */
-    public function actionLatest()
+    public function actionLatest(): AbstractReply
     {
         $order = $this->filter('order', 'str');
         $direction = $this->filter('direction', 'str');
@@ -26,17 +23,16 @@ class User extends XFCP_User
 
         /** @var UserSearcher $searcher */
         $searcher = $this->searcher('XF:User');
-        if ($order && !$direction)
+        if (strlen($order) !== 0 && strlen($direction) === 0)
         {
             $direction = $searcher->getRecommendedOrderDirection($order);
         }
 
         $searcher->setOrder($order, $direction);
 
-        /** @var UserFinder $finder */
         $finder = $searcher->getFinder();
         $finder->isValidUser();
-        $finder->where('register_date', '>', \XF::$time - 86401);
+        $finder->where('register_date', '>=', \XF::$time - 86400);
         $finder->limitByPage($page, $perPage);
 
         $total = $finder->total();
@@ -47,20 +43,17 @@ class User extends XFCP_User
         $viewParams = [
             'users' => $users,
 
-            'total' => $total,
-            'page' => $page,
+            'total'   => $total,
+            'page'    => $page,
             'perPage' => $perPage,
 
 
-            'criteria' => $searcher->getFilteredCriteria(),
+            'criteria'    => $searcher->getFilteredCriteria(),
             'sortOptions' => $searcher->getOrderOptions(),
-            'order' => $order,
-            'direction' => $direction
+            'order'       => $order,
+            'direction'   => $direction
         ];
-        return $this->view(
-            'SV\DailyStatistics\XF:User\Latest',
-            'svDailyStatistics_latest_users',
-            $viewParams
-        );
+
+        return $this->view('SV\DailyStatistics\XF:User\Latest', 'svDailyStatistics_latest_users', $viewParams);
     }
 }

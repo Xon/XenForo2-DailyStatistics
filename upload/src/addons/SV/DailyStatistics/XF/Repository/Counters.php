@@ -7,6 +7,7 @@ use XF\Finder\Thread as ThreadFinder;
 use XF\Finder\Post as PostFinder;
 use XFRM\Finder\ResourceItem as ResourceItemFinder;
 use XFMG\Finder\MediaItem as MediaItemFinder;
+use function is_callable, is_array, in_array;
 
 /**
  * Class Counters
@@ -15,27 +16,24 @@ use XFMG\Finder\MediaItem as MediaItemFinder;
  */
 class Counters extends XFCP_Counters
 {
-    /**
-     * @return array|bool|false
-     */
-    public function getForumStatisticsCacheData()
+    public function getForumStatisticsCacheData(): array
     {
+        /** @var array $forumStatisticsCacheData */
         $forumStatisticsCacheData = parent::getForumStatisticsCacheData();
 
-        $getTimestamp = function ($days)
-        {
+        $getTimestamp = function ($days) {
             return \XF::$time - $days * 86400;
         };
 
         $definition = $this->getExtendForumStatisticsDefinition();
-        foreach($definition as $statisticType => $stats)
+        foreach ($definition as $statisticType => $stats)
         {
             foreach ($stats as $type => $funcOptions)
             {
                 $func = $funcOptions[0];
-                $time1 = isset($funcOptions[1]) ? $funcOptions[1] : 0;
-                $time2 = isset($funcOptions[2]) ? $funcOptions[2] : 0;
-                $callable = \is_callable($func) || is_array($func) ? $func : [$this, $func];
+                $time1 = $funcOptions[1] ?? 0;
+                $time2 = $funcOptions[2] ?? 0;
+                $callable = is_callable($func) || is_array($func) ? $func : [$this, $func];
                 $forumStatisticsCacheData['svDailyStatistics'][$statisticType][$type] = $callable($time1 ? $getTimestamp($time1) : 0, $time2 ? $getTimestamp($time2) : 0);
             }
         }
@@ -43,46 +41,45 @@ class Counters extends XFCP_Counters
         return $forumStatisticsCacheData;
     }
 
-    public function getExtendForumStatisticsDefinition()
+    public function getExtendForumStatisticsDefinition(): array
     {
         $definition = [
             'latestUsers' => [
                 'today' => ['getUsersCountForDailyStatistics', 1],
-                'week' => ['getUsersCountForDailyStatistics', 7],
+                'week'  => ['getUsersCountForDailyStatistics', 7],
                 'month' => ['getUsersCountForDailyStatistics', 30],
             ],
             'activeUsers' => [
                 'today' => ['getUsersCountForDailyStatistics', 0, 1],
-                'week' => ['getUsersCountForDailyStatistics', 0, 7],
+                'week'  => ['getUsersCountForDailyStatistics', 0, 7],
                 'month' => ['getUsersCountForDailyStatistics', 0, 30],
             ],
-            'threads' => [
+            'threads'     => [
                 'today' => ['getThreadsCountForDailyStatistics', 1],
-                'week' => ['getThreadsCountForDailyStatistics', 7],
+                'week'  => ['getThreadsCountForDailyStatistics', 7],
                 'month' => ['getThreadsCountForDailyStatistics', 30],
             ],
-            'posts' => [
+            'posts'       => [
                 'today' => ['getPostsCountForDailyStatistics', 1],
-                'week' => ['getPostsCountForDailyStatistics', 7],
+                'week'  => ['getPostsCountForDailyStatistics', 7],
                 'month' => ['getPostsCountForDailyStatistics', 30],
             ]
         ];
 
-        $addOns = \XF::app()->container('addon.cache');
-        if (isset($addOns['XFRM']) && $addOns['XFRM'] >= 2000010)
+        if (\XF::isAddOnActive('XFRM', 2000010))
         {
             $definition['resources'] = [
                 'today' => ['getResourceCountForDailyStatistics', 1],
-                'week' => ['getResourceCountForDailyStatistics', 7],
+                'week'  => ['getResourceCountForDailyStatistics', 7],
                 'month' => ['getResourceCountForDailyStatistics', 30],
             ];
         }
 
-        if (isset($addOns['XFMG']) && $addOns['XFMG'] >= 2000010)
+        if (\XF::isAddOnActive('XFMG', 2000010))
         {
             $definition['mediaItems'] = [
                 'today' => ['getMediaCountForDailyStatistics', 1],
-                'week' => ['getMediaCountForDailyStatistics', 7],
+                'week'  => ['getMediaCountForDailyStatistics', 7],
                 'month' => ['getMediaCountForDailyStatistics', 30],
             ];
         }
@@ -90,15 +87,9 @@ class Counters extends XFCP_Counters
         return $definition;
     }
 
-    /**
-     * @param int $registeredSince
-     * @param int $hasBeenActiveSince
-     *
-     * @return int
-     */
-    protected function getUsersCountForDailyStatistics($registeredSince = 0, $hasBeenActiveSince = 0)
+    protected function getUsersCountForDailyStatistics(int $registeredSince = 0, int $hasBeenActiveSince = 0): int
     {
-        if (!$registeredSince && !$hasBeenActiveSince)
+        if ($registeredSince === 0 && $hasBeenActiveSince === 0)
         {
             return 0;
         }
@@ -107,12 +98,12 @@ class Counters extends XFCP_Counters
         $userFinder = $this->finder('XF:User');
         $userFinder->isValidUser();
 
-        if ($registeredSince)
+        if ($registeredSince !== 0)
         {
             $userFinder->where('register_date', '>=', $registeredSince);
         }
 
-        if ($hasBeenActiveSince)
+        if ($hasBeenActiveSince !== 0)
         {
             $userFinder->where('last_activity', '>=', $hasBeenActiveSince);
         }
@@ -120,12 +111,7 @@ class Counters extends XFCP_Counters
         return $userFinder->total();
     }
 
-    /**
-     * @param int $startDate
-     *
-     * @return int
-     */
-    protected function getThreadsCountForDailyStatistics($startDate = 0)
+    protected function getThreadsCountForDailyStatistics(int $startDate = 0): int
     {
         /** @var ThreadFinder $threadFinder */
         $threadFinder = $this->finder('XF:Thread');
@@ -136,12 +122,7 @@ class Counters extends XFCP_Counters
             ->total();
     }
 
-    /**
-     * @param int $startDate
-     *
-     * @return int
-     */
-    protected function getPostsCountForDailyStatistics($startDate)
+    protected function getPostsCountForDailyStatistics(int $startDate): int
     {
         /** @var PostFinder $postFinder */
         $postFinder = $this->finder('XF:Post');
@@ -152,12 +133,7 @@ class Counters extends XFCP_Counters
             ->total();
     }
 
-    /**
-     * @param int $startDate
-     *
-     * @return int
-     */
-    protected function getResourceCountForDailyStatistics($startDate)
+    protected function getResourceCountForDailyStatistics(int $startDate): int
     {
         /** @var ResourceItemFinder $resourceItemFinder */
         $resourceItemFinder = $this->finder('XFRM:ResourceItem');
@@ -168,12 +144,7 @@ class Counters extends XFCP_Counters
             ->total();
     }
 
-    /**
-     * @param int $startDate
-     *
-     * @return int
-     */
-    protected function getMediaCountForDailyStatistics($startDate)
+    protected function getMediaCountForDailyStatistics(int $startDate): int
     {
         /** @var MediaItemFinder $mediaItemFinder */
         $mediaItemFinder = $this->finder('XFMG:MediaItem');
@@ -184,13 +155,7 @@ class Counters extends XFCP_Counters
             ->total();
     }
 
-    /**
-     * @param bool $public
-     * @param bool $applyPermissions
-     * @param bool $hideDisabled
-     * @return array
-     */
-    public function getExtendedStatistics($public, $applyPermissions = true, $hideDisabled = true)
+    public function getExtendedStatistics(bool $public, bool $applyPermissions = true, bool $hideDisabled = true): array
     {
         /** @var \SV\DailyStatistics\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
@@ -213,14 +178,15 @@ class Counters extends XFCP_Counters
             }
         }
 
-        $key = $public ? 'svDailyStatistics_publicWidgetStatistics' : 'svDailyStatistics_dashboardStatistics';
         $options = $this->app()->options();
-        if (!$options->offsetExists($key))
+        $dashboardStatistics = $public
+            ? ($options->svDailyStatistics_publicWidgetStatistics ?? null)
+            : ($options->svDailyStatistics_dashboardStatistics ?? null);
+        if ($dashboardStatistics === null)
         {
             return [];
         }
 
-        $dashboardStatistics = $options->offsetGet($key);
         $extendedStatistics = [];
         $forumStatistics = $this->app()->get('forumStatistics');
 
@@ -240,13 +206,11 @@ class Counters extends XFCP_Counters
                 continue;
             }
 
-            $statistics = empty($forumStatistics['svDailyStatistics'][$statisticType])
-                ? [
+            $statistics = $forumStatistics['svDailyStatistics'][$statisticType] ?? [
                     'today' => 0,
                     'week'  => 0,
                     'month' => 0,
-                ]
-                : $forumStatistics['svDailyStatistics'][$statisticType];
+                ];
 
             $extendedStatistics[$statisticType] = [
                 'label' => \XF::phrase('svDailyStatistics_extended_stat.' . $statisticType),

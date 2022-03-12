@@ -2,7 +2,7 @@
 
 namespace SV\DailyStatistics;
 
-use SV\Utils\InstallerHelper;
+use SV\StandardLib\InstallerHelper;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
@@ -16,7 +16,6 @@ use XF\Repository\Counters as CountersRepo;
  */
 class Setup extends AbstractSetup
 {
-    // from https://github.com/Xon/XenForo2-Utils cloned to src/addons/SV/Utils
     use InstallerHelper;
     use StepRunnerInstallTrait;
     use StepRunnerUpgradeTrait;
@@ -116,8 +115,9 @@ class Setup extends AbstractSetup
         }
     }
 
-    protected function hasOptionSet($optionName)
+    protected function hasOptionSet($optionName): bool
     {
+        /** @var \XF\Entity\Option $option */
         $option = \XF::finder('XF:Option')
                      ->whereId($optionName)
                      ->fetchOne();
@@ -129,9 +129,11 @@ class Setup extends AbstractSetup
         return false;
     }
 
-    /**
-     * @param array $stateChanges
-     */
+    public function upgrade2010000Step1()
+    {
+        @unlink(__DIR__.'/icon.png');
+    }
+
     public function postInstall(array &$stateChanges)
     {
         /** @var CountersRepo $countersRepo */

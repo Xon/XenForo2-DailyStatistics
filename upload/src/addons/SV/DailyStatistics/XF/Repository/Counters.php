@@ -3,10 +3,6 @@
 namespace SV\DailyStatistics\XF\Repository;
 
 use XF\Finder\User as UserFinder;
-use XF\Finder\Thread as ThreadFinder;
-use XF\Finder\Post as PostFinder;
-use XFRM\Finder\ResourceItem as ResourceItemFinder;
-use XFMG\Finder\MediaItem as MediaItemFinder;
 use function is_callable, is_string, in_array;
 
 /**
@@ -124,46 +120,34 @@ class Counters extends XFCP_Counters
 
     protected function getThreadCountForDailyStatistics(int $startDate = 0): int
     {
-        /** @var ThreadFinder $threadFinder */
-        $threadFinder = $this->finder('XF:Thread');
-
-        return $threadFinder
-            ->where('discussion_state', 'visible')
-            ->where('post_date', '>=', $startDate)
-            ->total();
+        return $this->finder('XF:Thread')
+                    ->where('discussion_state', 'visible')
+                    ->where('post_date', '>=', $startDate)
+                    ->total();
     }
 
     protected function getPostCountForDailyStatistics(int $startDate): int
     {
-        /** @var PostFinder $postFinder */
-        $postFinder = $this->finder('XF:Post');
-
-        return $postFinder
-            ->where('message_state', 'visible')
-            ->where('post_date', '>=', $startDate)
-            ->total();
+        return $this->finder('XF:Post')
+                    ->where('message_state', 'visible')
+                    ->where('post_date', '>=', $startDate)
+                    ->total();
     }
 
     protected function getResourceCountForDailyStatistics(int $startDate): int
     {
-        /** @var ResourceItemFinder $resourceItemFinder */
-        $resourceItemFinder = $this->finder('XFRM:ResourceItem');
-
-        return $resourceItemFinder
-            ->where('resource_state', 'visible')
-            ->where('resource_date', '>=', $startDate)
-            ->total();
+        return $this->finder('XFRM:ResourceItem')
+                    ->where('resource_state', 'visible')
+                    ->where('resource_date', '>=', $startDate)
+                    ->total();
     }
 
     protected function getMediaCountForDailyStatistics(int $startDate): int
     {
-        /** @var MediaItemFinder $mediaItemFinder */
-        $mediaItemFinder = $this->finder('XFMG:MediaItem');
-
-        return $mediaItemFinder
-            ->where('media_state', 'visible')
-            ->where('media_date', '>=', $startDate)
-            ->total();
+        return $this->finder('XFMG:MediaItem')
+                    ->where('media_state', 'visible')
+                    ->where('media_date', '>=', $startDate)
+                    ->total();
     }
 
     public function getExtendedStatistics(bool $public, bool $applyPermissions = true, bool $hideDisabled = true): array

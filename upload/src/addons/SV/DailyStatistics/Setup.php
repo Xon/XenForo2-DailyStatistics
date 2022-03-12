@@ -131,6 +131,10 @@ class Setup extends AbstractSetup
 
     public function upgrade2010000Step1()
     {
+        $this->renamePhrases([
+            'svDailyStatistics_new_resourcess_today' => 'svDailyStatistics_new_resources_today',
+        ]);
+
         @unlink(__DIR__.'/icon.png');
     }
 

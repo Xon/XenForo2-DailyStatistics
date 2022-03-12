@@ -29,6 +29,12 @@
 				  arg-label="{{ phrase('svDailyStatistics_new_media_items_today') }}"
 				  arg-count="{$extendedStatistics.mediaItems.stats.today}" />
 	</xf:if>
+
+    <xf:if is="$extendedStatistics.threadmarks is not empty">
+        <xf:macro name="stat_block"
+                  arg-label="{{ phrase('svDailyStatistics_new_threadmarks_today') }}"
+                  arg-count="{$extendedStatistics.threadmarks.stats.today}" />
+    </xf:if>
 </xf:if>
 
 <xf:macro name="stat_block" arg-label="!" arg-count="!" arg-pairClass="">

@@ -236,7 +236,10 @@ class Counters extends XFCP_Counters
             return [];
         }
 
-        $search = (\XF::options()->svDailyStatisticsSearchLink ?? true) && $visitor->canSearch();
+        $search = (
+                      $public && (\XF::options()->svDailyStatisticsSearchLinkPublic ?? false) ||
+                      !$public && (\XF::options()->svDailyStatisticsSearchLinkAdmin ?? true)
+                  ) && $visitor->canSearch();
 
         $extendedStatistics = [];
         $forumStatistics = $this->app()->get('forumStatistics');

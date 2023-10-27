@@ -1,0 +1,1 @@
+Add search link in dashboard

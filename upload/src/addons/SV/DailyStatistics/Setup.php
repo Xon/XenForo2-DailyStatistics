@@ -21,7 +21,7 @@ class Setup extends AbstractSetup
     use StepRunnerUpgradeTrait;
     use StepRunnerUninstallTrait;
 
-    public function upgrade2000001Step1()
+    public function upgrade2000001Step1(): void
     {
         $this->renamePermission(
             'MWSDailyStats', 'MWSviewStats',
@@ -137,7 +137,7 @@ class Setup extends AbstractSetup
         return false;
     }
 
-    public function upgrade2010000Step1()
+    public function upgrade2010000Step1(): void
     {
         $this->renamePhrases([
             'svDailyStatistics_new_media_items_today' => 'svDailyStatistics_new_today.mediaItems',
@@ -150,12 +150,12 @@ class Setup extends AbstractSetup
         ]);
     }
 
-    public function upgrade2010000Step2()
+    public function upgrade2010000Step2(): void
     {
         @unlink(__DIR__.'/icon.png');
     }
 
-    public function upgrade2010000Step3()
+    public function upgrade2010000Step3(): void
     {
         /** @var \XF\Entity\Option $option */
         $option = \XF::finder('XF:Option')
@@ -171,7 +171,7 @@ class Setup extends AbstractSetup
         }
     }
 
-    public function postInstall(array &$stateChanges)
+    public function postInstall(array &$stateChanges): void
     {
         /** @var CountersRepo $countersRepo */
         $countersRepo = \XF::repository('XF:Counters');
@@ -182,7 +182,7 @@ class Setup extends AbstractSetup
      * @param int|null $previousVersion
      * @param array $stateChanges
      */
-    public function postUpgrade($previousVersion, array &$stateChanges)
+    public function postUpgrade($previousVersion, array &$stateChanges): void
     {
         /** @var CountersRepo $countersRepo */
         $countersRepo = \XF::repository('XF:Counters');

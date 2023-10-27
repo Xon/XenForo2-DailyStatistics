@@ -28,7 +28,7 @@ class Counters extends XFCP_Counters
             return \XF::$time - $days * 86400;
         };
 
-        $definition = $this->getExtendForumStatisticsDefinition(false);
+        $definition = $this->getExtendForumStatisticsDefinition(false, false);
         foreach ($definition as $statisticType => $stats)
         {
             foreach ($stats as $type => $funcOptions)
@@ -74,11 +74,15 @@ class Counters extends XFCP_Counters
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    public function getExtendForumStatisticsDefinition(bool $withSearch): array
+    public function getExtendForumStatisticsDefinition(bool $public, bool $withSearch): array
     {
         $searchLink = $withSearch
             ? \Closure::fromCallable([$this, 'svBuildRecentSearchLink'])
             : function (int $days, string $contentType, string $subtype = '') { return ''; };
+
+        $latestUserSearch = $withSearch && \XF::visitor()->hasAdminPermission('users')
+            ? function (int $days) { return $this->app()->router('admin')->buildLink('users/latest', null, ['days' => $days]); }
+            : function (int $days) { return ''; };
 
         $definition = [
             'activeUsers' => [
@@ -87,9 +91,9 @@ class Counters extends XFCP_Counters
                 'month' => ['getUserCountForDailyStatistics', 0, 30],
             ],
             'latestUsers' => [
-                'today' => ['getUserCountForDailyStatistics', 1],
-                'week'  => ['getUserCountForDailyStatistics', 7],
-                'month' => ['getUserCountForDailyStatistics', 30],
+                'today' => ['getUserCountForDailyStatistics', 1, 'searchUrl' => $latestUserSearch(1)],
+                'week'  => ['getUserCountForDailyStatistics', 7, 'searchUrl' => $latestUserSearch(7)],
+                'month' => ['getUserCountForDailyStatistics', 30, 'searchUrl' => $latestUserSearch(30)],
             ],
             'threads'     => [
                 'today' => ['getThreadCountForDailyStatistics', 1, 'searchUrl' => $searchLink(1, 'post', 'thread')],
@@ -238,7 +242,7 @@ class Counters extends XFCP_Counters
         $extendedStatistics = [];
         $forumStatistics = $this->app()->get('forumStatistics');
 
-        $definition = $this->getExtendForumStatisticsDefinition($search);
+        $definition = $this->getExtendForumStatisticsDefinition($public, $search);
         foreach ($definition as $statisticType => $stats)
         {
             if (!$public && $applyPermissions &&

@@ -4,6 +4,7 @@ namespace SV\DailyStatistics\XF\Admin\Controller;
 
 use XF\Mvc\Reply\AbstractReply;
 use XF\Searcher\User as UserSearcher;
+use function in_array;
 use function strlen;
 
 /**
@@ -17,6 +18,11 @@ class User extends XFCP_User
     {
         $order = $this->filter('order', 'str');
         $direction = $this->filter('direction', 'str');
+        $days = (int)$this->filter('days', 'int');
+        if (in_array($days, [1,7,30], true))
+        {
+            $days = 1;
+        }
 
         $page = $this->filterPage();
         $perPage = 20;
@@ -32,7 +38,7 @@ class User extends XFCP_User
 
         $finder = $searcher->getFinder();
         $finder->isValidUser();
-        $finder->where('register_date', '>=', \XF::$time - 86400);
+        $finder->where('register_date', '>=', \XF::$time - $days * 86400);
         $finder->limitByPage($page, $perPage);
 
         $total = $finder->total();
@@ -42,6 +48,7 @@ class User extends XFCP_User
 
         $viewParams = [
             'users' => $users,
+            'days' => $days,
 
             'total'   => $total,
             'page'    => $page,

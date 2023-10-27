@@ -1,9 +1,11 @@
 <xf:if is="is_addon_active('SV/DailyStatistics') && $xf.options.svDailyStatistics_showInForumStatisticsWidget">
 	<xf:set var="$extendedStatistics" value="{{ $xf.app.em.getRepository('XF:Counters').getExtendedStatistics(true) }}"/>
     <xf:foreach loop="$extendedStatistics" key="$phraseKey" value="$stats">
+		<xf:set var="$statsHtml">{$stats.today|number}</xf:set>
+		<xf:if is="$stats.search.today"><xf:set var="$statsHtml"><a rel="nofollow" href="{$stats.search.today|for_attr}">{$statsHtml}</a></xf:set></xf:if>
         <dl class="pairs pairs--justified {$pairClass}">
             <dt>{{ phrase_dynamic('svDailyStatistics_new_today.'.$phraseKey) }}</dt>
-            <dd>{$stats.today|number}</dd>
+            <dd>{$statsHtml}</dd>
         </dl>
     </xf:foreach>
 </xf:if>

@@ -18,8 +18,13 @@
 					<xf:foreach loop="$extendedStatistics" key="$type" value="$stats">
 						<xf:datarow>
 							<xf:cell>{{ phrase_dynamic('svDailyStatistics_extended_stat.'.$type) }}</xf:cell>
-							<xf:foreach loop="$stats" value="$count">
-								<xf:cell>{$count|number}</xf:cell>
+							<xf:foreach loop="$stats" key="$key" value="$count" if="$key !== 'search'">
+								<xf:cell>
+									<xf:set var="$statsHtml">{$count|number}</xf:set>
+									<xf:set var="$searchUrl" value="{{ $stats.search.{$key} }}" />
+									<xf:if is="$searchUrl"><xf:set var="$statsHtml"><a rel="nofollow" href="{$searchUrl|for_attr}">{$statsHtml}</a></xf:set></xf:if>
+									{$statsHtml}
+								</xf:cell>
 							</xf:foreach>
 						</xf:datarow>
 					</xf:foreach>

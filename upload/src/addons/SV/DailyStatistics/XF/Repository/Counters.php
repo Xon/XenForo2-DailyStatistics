@@ -3,6 +3,9 @@
 namespace SV\DailyStatistics\XF\Repository;
 
 use XF\Finder\User as UserFinder;
+use function array_merge;
+use function count;
+use function is_array;
 use function is_callable, is_string, in_array;
 
 /**
@@ -25,7 +28,7 @@ class Counters extends XFCP_Counters
             return \XF::$time - $days * 86400;
         };
 
-        $definition = $this->getExtendForumStatisticsDefinition();
+        $definition = $this->getExtendForumStatisticsDefinition(false);
         foreach ($definition as $statisticType => $stats)
         {
             foreach ($stats as $type => $funcOptions)
@@ -48,8 +51,35 @@ class Counters extends XFCP_Counters
         return $forumStatisticsCacheData;
     }
 
-    public function getExtendForumStatisticsDefinition(): array
+    protected function svBuildRecentSearchLink(int $days, string $contentType, string $subtype = '', array $additionalCriteria = []): string
     {
+        $search = [
+            'keywords' => '*',
+            'order' => 'date',
+            'search_type' => $contentType,
+            'c' => [
+                'newer_than' => \XF::$time - $days * 86400,
+            ],
+        ];
+        if ($subtype !== '')
+        {
+            $search['c']['content'] = $subtype;
+        }
+        if (count($additionalCriteria) !== 0)
+        {
+            $search = array_merge($search, $additionalCriteria);
+        }
+
+        return \XF::app()->router('public')->buildLink('search/search', null, $search);
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+    public function getExtendForumStatisticsDefinition(bool $withSearch): array
+    {
+        $searchLink = $withSearch
+            ? \Closure::fromCallable([$this, 'svBuildRecentSearchLink'])
+            : function (int $days, string $contentType, string $subtype = '') { return ''; };
+
         $definition = [
             'activeUsers' => [
                 'today' => ['getUserCountForDailyStatistics', 0, 1],
@@ -62,41 +92,45 @@ class Counters extends XFCP_Counters
                 'month' => ['getUserCountForDailyStatistics', 30],
             ],
             'threads'     => [
-                'today' => ['getThreadCountForDailyStatistics', 1],
-                'week'  => ['getThreadCountForDailyStatistics', 7],
-                'month' => ['getThreadCountForDailyStatistics', 30],
+                'today' => ['getThreadCountForDailyStatistics', 1, 'searchUrl' => $searchLink(1, 'post', 'thread')],
+                'week'  => ['getThreadCountForDailyStatistics', 7, 'searchUrl' => $searchLink(7, 'post', 'thread')],
+                'month' => ['getThreadCountForDailyStatistics', 30, 'searchUrl' => $searchLink(30, 'post', 'thread')],
             ],
             'posts'       => [
-                'today' => ['getPostCountForDailyStatistics', 1],
-                'week'  => ['getPostCountForDailyStatistics', 7],
-                'month' => ['getPostCountForDailyStatistics', 30],
+                'today' => ['getPostCountForDailyStatistics', 1, 'searchUrl' => $searchLink(1, 'post')],
+                'week'  => ['getPostCountForDailyStatistics', 7, 'searchUrl' => $searchLink(7, 'post')],
+                'month' => ['getPostCountForDailyStatistics', 30, 'searchUrl' => $searchLink(30, 'post')],
             ]
         ];
 
         if (\XF::isAddOnActive('XFRM', 2000010))
         {
             $definition['resources'] = [
-                'today' => ['getResourceCountForDailyStatistics', 1],
-                'week'  => ['getResourceCountForDailyStatistics', 7],
-                'month' => ['getResourceCountForDailyStatistics', 30],
+                'today' => ['getResourceCountForDailyStatistics', 1, 'searchUrl' => $searchLink(1, 'resource', 'resource')],
+                'week'  => ['getResourceCountForDailyStatistics', 7, 'searchUrl' => $searchLink(7, 'resource', 'resource')],
+                'month' => ['getResourceCountForDailyStatistics', 30, 'searchUrl' => $searchLink(30, 'resource', 'resource')],
             ];
         }
 
         if (\XF::isAddOnActive('XFMG', 2000010))
         {
             $definition['mediaItems'] = [
-                'today' => ['getMediaCountForDailyStatistics', 1],
-                'week'  => ['getMediaCountForDailyStatistics', 7],
-                'month' => ['getMediaCountForDailyStatistics', 30],
+                'today' => ['getMediaCountForDailyStatistics', 1, 'searchUrl' => $searchLink(1, 'xfmg_media')],
+                'week'  => ['getMediaCountForDailyStatistics', 7, 'searchUrl' => $searchLink(7, 'xfmg_media')],
+                'month' => ['getMediaCountForDailyStatistics', 30, 'searchUrl' => $searchLink(30, 'xfmg_media')],
             ];
         }
 
         if (\XF::isAddOnActive('SV/Threadmarks', 2000000))
         {
+            $threadmarkSearchLink = function (int $days) use ($searchLink) {
+                return $searchLink($days, 'post', '', ['threadmark_only' => true]);
+            };
+
             $definition['threadmarks'] = [
-                'today' => ['getThreadmarkCountForDailyStatistics', 1],
-                'week'  => ['getThreadmarkCountForDailyStatistics', 7],
-                'month' => ['getThreadmarkCountForDailyStatistics', 30],
+                'today' => ['getThreadmarkCountForDailyStatistics', 1, 'searchUrl' => $threadmarkSearchLink(1)],
+                'week'  => ['getThreadmarkCountForDailyStatistics', 7, 'searchUrl' => $threadmarkSearchLink(7)],
+                'month' => ['getThreadmarkCountForDailyStatistics', 30, 'searchUrl' => $threadmarkSearchLink(30)],
             ];
         }
 
@@ -199,10 +233,12 @@ class Counters extends XFCP_Counters
             return [];
         }
 
+        $search = $visitor->canSearch();
+
         $extendedStatistics = [];
         $forumStatistics = $this->app()->get('forumStatistics');
 
-        $definition = $this->getExtendForumStatisticsDefinition();
+        $definition = $this->getExtendForumStatisticsDefinition($search);
         foreach ($definition as $statisticType => $stats)
         {
             if (!$public && $applyPermissions &&
@@ -222,7 +258,20 @@ class Counters extends XFCP_Counters
                     'today' => 0,
                     'week'  => 0,
                     'month' => 0,
+                    'search' => [],
                 ];
+
+            if ($search)
+            {
+                foreach(array_keys($statistics) as $key)
+                {
+                    $url = $stats[$key]['searchUrl'] ?? null;
+                    if ($url !== null)
+                    {
+                        $statistics['search'][$key] = $url;
+                    }
+                }
+            }
 
             $extendedStatistics[$statisticType] = $statistics;
         }

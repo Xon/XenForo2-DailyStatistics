@@ -10,6 +10,6 @@
     "advanced": false,
     "default_value": "[\"latestUsers\",\"activeUsers\",\"threads\",\"posts\",\"resources\",\"mediaItems\",\"threadmarks\"]",
     "relations": {
-        "svDailyStatistics": 30
+        "svDailyStatistics": 220
     }
 }

@@ -5,7 +5,6 @@ namespace SV\DailyStatistics\XF\Repository;
 use XF\Finder\User as UserFinder;
 use function array_merge;
 use function count;
-use function is_array;
 use function is_callable, is_string, in_array;
 
 /**
@@ -237,7 +236,7 @@ class Counters extends XFCP_Counters
             return [];
         }
 
-        $search = $visitor->canSearch();
+        $search = (\XF::options()->svDailyStatisticsSearchLink ?? true) && $visitor->canSearch();
 
         $extendedStatistics = [];
         $forumStatistics = $this->app()->get('forumStatistics');

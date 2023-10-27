@@ -10,9 +10,18 @@
     "support_url": "https://xenforo.com/community/resources/daily-statistics.7125/",
     "extra_urls": [],
     "require": {
-        "XF": [2020070, "XenForo 2.2.0+"],
-        "php": ["7.0.0","PHP 7.0.0+"],
-        "SV/StandardLib": [1010000,"Standard Library by Xon v1.1.0+"]
+        "SV/StandardLib": [
+            2001180000,
+            "Standard Library by Xon v1.18.0+"
+        ],
+        "XF": [
+            "2.2.0",
+            "XenForo 2.2.0+"
+        ],
+        "php": [
+            "7.2.0",
+            "PHP 7.2.0+"
+        ]
     },
     "icon": "fas fa-chart-line"
 }

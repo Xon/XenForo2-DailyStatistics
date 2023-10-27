@@ -79,7 +79,7 @@ class Counters extends XFCP_Counters
             ? \Closure::fromCallable([$this, 'svBuildRecentSearchLink'])
             : function (int $days, string $contentType, string $subtype = '') { return ''; };
 
-        $latestUserSearch = $withSearch && \XF::visitor()->hasAdminPermission('users')
+        $latestUserSearch = $withSearch && \XF::visitor()->hasAdminPermission('user')
             ? function (int $days) { return $this->app()->router('admin')->buildLink('users/latest', null, ['days' => $days]); }
             : function (int $days) { return ''; };
 

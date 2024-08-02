@@ -17,7 +17,7 @@ class User extends XFCP_User
         $order = $this->filter('order', 'str');
         $direction = $this->filter('direction', 'str');
         $days = (int)$this->filter('days', 'int');
-        if (!in_array($days, [1,7,30], true))
+        if (!in_array($days, [1, 7, 30], true))
         {
             $days = 1;
         }
@@ -46,7 +46,7 @@ class User extends XFCP_User
 
         $viewParams = [
             'users' => $users,
-            'days' => $days,
+            'days'  => $days,
 
             'total'   => $total,
             'page'    => $page,

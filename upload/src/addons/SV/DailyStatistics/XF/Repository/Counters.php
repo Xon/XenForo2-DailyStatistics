@@ -2,7 +2,15 @@
 
 namespace SV\DailyStatistics\XF\Repository;
 
+use SV\DailyStatistics\XF\Entity\User as ExtendedUserEntity;
+use SV\StandardLib\Helper;
+use SV\Threadmarks\Finder\Threadmark as ThreadmarkFinder;
+use XF\Finder\Post as PostFinder;
+use XF\Finder\Thread as ThreadFinder;
 use XF\Finder\User as UserFinder;
+use XFMG\Finder\MediaItem as MediaItemFinder;
+use XFRM\Finder\ResourceItem as ResourceItemFinder;
+use function array_keys;
 use function array_merge;
 use function count;
 use function is_callable, is_string, in_array;
@@ -145,8 +153,7 @@ class Counters extends XFCP_Counters
             return 0;
         }
 
-        /** @var UserFinder $userFinder */
-        $userFinder = $this->finder('XF:User');
+        $userFinder = Helper::finder(UserFinder::class);
         $userFinder->isValidUser();
 
         if ($registeredSince !== 0)
@@ -164,47 +171,47 @@ class Counters extends XFCP_Counters
 
     protected function getThreadCountForDailyStatistics(int $startDate = 0): int
     {
-        return $this->finder('XF:Thread')
-                    ->where('discussion_state', 'visible')
-                    ->where('post_date', '>=', $startDate)
-                    ->total();
+        return Helper::finder(ThreadFinder::class)
+                     ->where('discussion_state', 'visible')
+                     ->where('post_date', '>=', $startDate)
+                     ->total();
     }
 
     protected function getPostCountForDailyStatistics(int $startDate): int
     {
-        return $this->finder('XF:Post')
-                    ->where('message_state', 'visible')
-                    ->where('post_date', '>=', $startDate)
-                    ->total();
+        return Helper::finder(PostFinder::class)
+                     ->where('message_state', 'visible')
+                     ->where('post_date', '>=', $startDate)
+                     ->total();
     }
 
     protected function getResourceCountForDailyStatistics(int $startDate): int
     {
-        return $this->finder('XFRM:ResourceItem')
-                    ->where('resource_state', 'visible')
-                    ->where('resource_date', '>=', $startDate)
-                    ->total();
+        return Helper::finder(ResourceItemFinder::class)
+                     ->where('resource_state', 'visible')
+                     ->where('resource_date', '>=', $startDate)
+                     ->total();
     }
 
     protected function getMediaCountForDailyStatistics(int $startDate): int
     {
-        return $this->finder('XFMG:MediaItem')
-                    ->where('media_state', 'visible')
-                    ->where('media_date', '>=', $startDate)
-                    ->total();
+        return Helper::finder(MediaItemFinder::class)
+                     ->where('media_state', 'visible')
+                     ->where('media_date', '>=', $startDate)
+                     ->total();
     }
 
     protected function getThreadmarkCountForDailyStatistics(int $startDate): int
     {
-        return $this->finder('SV\Threadmarks:Threadmark')
-                    ->where('message_state', 'visible')
-                    ->where('threadmark_date', '>=', $startDate)
-                    ->total();
+        return Helper::finder(ThreadmarkFinder::class)
+                     ->where('message_state', 'visible')
+                     ->where('threadmark_date', '>=', $startDate)
+                     ->total();
     }
 
     public function getExtendedStatistics(bool $public, bool $applyPermissions = true, bool $hideDisabled = true): array
     {
-        /** @var \SV\DailyStatistics\XF\Entity\User $visitor */
+        /** @var ExtendedUserEntity $visitor */
         $visitor = \XF::visitor();
 
         if ($applyPermissions)
@@ -259,11 +266,11 @@ class Counters extends XFCP_Counters
             }
 
             $statistics = $forumStatistics['svDailyStatistics'][$statisticType] ?? [
-                    'today' => 0,
-                    'week'  => 0,
-                    'month' => 0,
-                    'search' => [],
-                ];
+                'today' => 0,
+                'week'  => 0,
+                'month' => 0,
+                'search' => [],
+            ];
 
             if ($search)
             {

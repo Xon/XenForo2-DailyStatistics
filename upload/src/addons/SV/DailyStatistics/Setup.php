@@ -2,12 +2,17 @@
 
 namespace SV\DailyStatistics;
 
+use SV\DailyStatistics\XF\Repository\Counters as ExtendedCountersRepo;
+use SV\StandardLib\Helper;
 use SV\StandardLib\InstallerHelper;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
+use XF\Entity\Option as OptionEntity;
+use XF\Finder\Option as OptionFinder;
 use XF\Repository\Counters as CountersRepo;
+use function unlink;
 
 /**
  * Class Setup
@@ -51,13 +56,13 @@ class Setup extends AbstractSetup
         }
 
         $this->renameOption('dailystats_acp_extended', 'svDailyStatistics_extendedStatsInDashboard');
-        $option = \XF::finder('XF:Option')
-                     ->whereId('svDailyStatistics_publicWidgetStatistics')
-                     ->fetchOne();
+        $option = Helper::finder(OptionFinder::class)
+                        ->whereId('svDailyStatistics_publicWidgetStatistics')
+                        ->fetchOne();
         if ($option === null)
         {
-            /** @var \XF\Entity\Option $option */
-            $option = \XF::em()->create('XF:Option');
+            /** @var OptionEntity $option */
+            $option = Helper::createEntity(OptionEntity::class);
             $option->option_id = 'svDailyStatistics_publicWidgetStatistics';
             if ($option->hasBehavior('XF:DevOutputWritable'))
             {
@@ -98,14 +103,11 @@ class Setup extends AbstractSetup
             $extend[] = 'mediaItems';
         }
 
-        $this->renameOption('dailystats_forum_home','svDailyStatistics_showInForumStatisticsWidget');
-        $option = \XF::finder('XF:Option')
-                     ->whereId('svDailyStatistics_dashboardStatistics')
-                     ->fetchOne();
+        $this->renameOption('dailystats_forum_home', 'svDailyStatistics_showInForumStatisticsWidget');
+        $option = Helper::find(OptionFinder::class, 'svDailyStatistics_dashboardStatistics');
         if ($option === null)
         {
-            /** @var \XF\Entity\Option $option */
-            $option = \XF::em()->create('XF:Option');
+            $option = Helper::createEntity(OptionEntity::class);
             $option->option_id = 'svDailyStatistics_dashboardStatistics';
             if ($option->hasBehavior('XF:DevOutputWritable'))
             {
@@ -123,13 +125,10 @@ class Setup extends AbstractSetup
         }
     }
 
-    protected function hasOptionSet($optionName): bool
+    protected function hasOptionSet(string $optionName): bool
     {
-        /** @var \XF\Entity\Option $option */
-        $option = \XF::finder('XF:Option')
-                     ->whereId($optionName)
-                     ->fetchOne();
-        if ($option)
+        $option = Helper::find(OptionEntity::class, $optionName);
+        if ($option !== null)
         {
             return (bool)$option->option_value;
         }
@@ -141,26 +140,23 @@ class Setup extends AbstractSetup
     {
         $this->renamePhrases([
             'svDailyStatistics_new_media_items_today' => 'svDailyStatistics_new_today.mediaItems',
-            'svDailyStatistics_new_members_today' => 'svDailyStatistics_new_today.latestUsers',
-            'svDailyStatistics_new_posts_today' => 'svDailyStatistics_new_today.posts',
-            'svDailyStatistics_new_resources_today' => 'svDailyStatistics_new_today.resources',
-            'svDailyStatistics_new_resourcess_today' => 'svDailyStatistics_new_today.resources',
+            'svDailyStatistics_new_members_today'     => 'svDailyStatistics_new_today.latestUsers',
+            'svDailyStatistics_new_posts_today'       => 'svDailyStatistics_new_today.posts',
+            'svDailyStatistics_new_resources_today'   => 'svDailyStatistics_new_today.resources',
+            'svDailyStatistics_new_resourcess_today'  => 'svDailyStatistics_new_today.resources',
             'svDailyStatistics_new_threadmarks_today' => 'svDailyStatistics_new_today.threadmarks',
-            'svDailyStatistics_new_threads_today' => 'svDailyStatistics_new_today.threads',
+            'svDailyStatistics_new_threads_today'     => 'svDailyStatistics_new_today.threads',
         ]);
     }
 
     public function upgrade2010000Step2(): void
     {
-        @unlink(__DIR__.'/icon.png');
+        @unlink(__DIR__ . '/icon.png');
     }
 
     public function upgrade2010000Step3(): void
     {
-        /** @var \XF\Entity\Option $option */
-        $option = \XF::finder('XF:Option')
-                     ->whereId('svDailyStatistics_dashboardStatistics')
-                     ->fetchOne();
+        $option = Helper::find(OptionEntity::class, 'svDailyStatistics_dashboardStatistics');
         if ($option !== null)
         {
             $extend = (array)($option->option_value ?? []);
@@ -173,19 +169,23 @@ class Setup extends AbstractSetup
 
     public function postInstall(array &$stateChanges): void
     {
-        /** @var CountersRepo $countersRepo */
-        $countersRepo = \XF::repository('XF:Counters');
+        parent::postInstall($stateChanges);
+        /** @var ExtendedCountersRepo $countersRepo */
+        $countersRepo = Helper::repository(CountersRepo::class);
         $countersRepo->rebuildForumStatisticsCache();
     }
 
     /**
      * @param int|null $previousVersion
-     * @param array $stateChanges
+     * @param array    $stateChanges
      */
     public function postUpgrade($previousVersion, array &$stateChanges): void
     {
-        /** @var CountersRepo $countersRepo */
-        $countersRepo = \XF::repository('XF:Counters');
+        $previousVersion = (int)$previousVersion;
+        parent::postUpgrade($previousVersion, $stateChanges);
+
+        /** @var ExtendedCountersRepo $countersRepo */
+        $countersRepo = Helper::repository(CountersRepo::class);
         $countersRepo->rebuildForumStatisticsCache();
     }
 }

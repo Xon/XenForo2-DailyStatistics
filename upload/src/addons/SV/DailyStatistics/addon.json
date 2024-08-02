@@ -9,12 +9,13 @@
     "faq_url": "",
     "support_url": "https://xenforo.com/community/resources/daily-statistics.7125/",
     "extra_urls": {
+	    "License": "https://atelieraphelion.com/products/daily-statistics.182/copyright",
         "Add-on site": "https://atelieraphelion.com/products/daily-statistics.182/"
     },
     "require": {
         "SV/StandardLib": [
-            2001180000,
-            "Standard Library by Xon v1.18.0+"
+            2001200000,
+            "Standard Library by Xon v1.20.0+"
         ],
         "XF": [
             "2.2.0",

@@ -2,14 +2,14 @@
     "legacy_addon_id": "DailyStats",
     "title": "Daily Statistics",
     "description": "Extended Statistics for your forum",
-    "version_id": 1698423712,
-    "version_string": "2.2.0",
+    "version_id": 1722567772,
+    "version_string": "2.3.0",
     "dev": "Atelier Aphelion",
     "dev_url": "https://atelieraphelion.com",
     "faq_url": "",
     "support_url": "https://xenforo.com/community/resources/daily-statistics.7125/",
     "extra_urls": {
-	    "License": "https://atelieraphelion.com/products/daily-statistics.182/copyright",
+        "License": "https://atelieraphelion.com/products/daily-statistics.182/copyright",
         "Add-on site": "https://atelieraphelion.com/products/daily-statistics.182/"
     },
     "require": {

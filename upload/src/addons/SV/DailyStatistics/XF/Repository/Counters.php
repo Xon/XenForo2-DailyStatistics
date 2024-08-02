@@ -8,9 +8,7 @@ use function count;
 use function is_callable, is_string, in_array;
 
 /**
- * Class Counters
- *
- * @package SV\DailyStatistics\Repository
+ * @extends \XF\Repository\Counters
  */
 class Counters extends XFCP_Counters
 {

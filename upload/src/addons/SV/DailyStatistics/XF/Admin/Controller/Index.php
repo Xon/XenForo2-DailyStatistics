@@ -7,9 +7,7 @@ use XF\Mvc\Reply\View as ViewReply;
 use SV\DailyStatistics\XF\Repository\Counters as CountersRepo;
 
 /**
- * Class Index
- *
- * @package SV\DailyStatistics\XF\Admin\Controller
+ * @extends \XF\Admin\Controller\Index
  */
 class Index extends XFCP_Index
 {

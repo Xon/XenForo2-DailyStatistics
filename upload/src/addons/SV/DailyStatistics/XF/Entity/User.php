@@ -3,9 +3,7 @@
 namespace SV\DailyStatistics\XF\Entity;
 
 /**
- * Class User
- *
- * @package SV\DailyStatistics\XF\Entity
+ * @extends \XF\Entity\User
  */
 class User extends XFCP_User
 {

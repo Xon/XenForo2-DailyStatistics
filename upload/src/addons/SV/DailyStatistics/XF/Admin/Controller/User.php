@@ -8,9 +8,7 @@ use function in_array;
 use function strlen;
 
 /**
- * Class User
- *
- * @package SV\DailyStatistics\XF\Admin\Controller
+ * @extends \XF\Admin\Controller\User
  */
 class User extends XFCP_User
 {

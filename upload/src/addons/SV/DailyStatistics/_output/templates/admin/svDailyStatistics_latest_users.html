@@ -20,7 +20,7 @@
 					</div>
 				</div>
 			</div>
-			<xf:macro template="filter_macros" name="quick_filter" arg-key="users"
+			<xf:macro name="filter_macros::quick_filter" arg-key="users"
 					  arg-ajax="{{ link('users/latest', null, {'order': $order, 'direction': $direction}) }}"
 					  arg-class="block-outer-opposite" />
 		</div>

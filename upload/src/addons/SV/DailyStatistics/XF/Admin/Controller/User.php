@@ -4,6 +4,7 @@ namespace SV\DailyStatistics\XF\Admin\Controller;
 
 use XF\Mvc\Reply\AbstractReply;
 use XF\Searcher\User as UserSearcher;
+use function end;
 use function in_array;
 use function strlen;
 
@@ -12,14 +13,16 @@ use function strlen;
  */
 class User extends XFCP_User
 {
+    protected static $allowedDayRange = [1, 7, 30];
+
     public function actionLatest(): AbstractReply
     {
-        $order = $this->filter('order', 'str');
+        $order = $this->filter('order', 'str', 'register_date');
         $direction = $this->filter('direction', 'str');
         $days = (int)$this->filter('days', 'int');
-        if (!in_array($days, [1, 7, 30], true))
+        if (!in_array($days, static::$allowedDayRange, true))
         {
-            $days = 1;
+            $days = end(static::$allowedDayRange);
         }
 
         $page = $this->filterPage();
@@ -44,6 +47,12 @@ class User extends XFCP_User
 
         $this->assertValidPage($page, $perPage, $total, 'users/latest');
 
+        $linkParams = [
+            'days' => $days,
+            'direction' => $direction,
+            'order' => $order,
+        ];
+
         $viewParams = [
             'users' => $users,
             'days'  => $days,
@@ -51,7 +60,7 @@ class User extends XFCP_User
             'total'   => $total,
             'page'    => $page,
             'perPage' => $perPage,
-
+            'linkParams' => $linkParams,
 
             'criteria'    => $searcher->getFilteredCriteria(),
             'sortOptions' => $searcher->getOrderOptions(),
